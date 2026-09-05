@@ -1,0 +1,124 @@
+{
+  "provenance_verdict": "LOCAL CURATED / PROTOTYPE DATASET \u2014 CLINICAL VALIDITY NOT ESTABLISHED",
+  "leakage_results": {
+    "train_count": 630,
+    "val_count": 132,
+    "test_count": 138,
+    "train_test_duplicates": 0,
+    "train_val_duplicates": 0,
+    "val_test_duplicates": 0
+  },
+  "parity_results": {
+    "parity_matches": 6,
+    "total_tested": 6,
+    "max_logit_diff": 6.9141387939453125e-06
+  },
+  "evaluation_results": {
+    "test_sample_count": 138,
+    "reproduced_accuracy": 0.9928,
+    "reproduced_loss": 0.0819,
+    "reproduced_macro_f1": 0.9928,
+    "classification_report": {
+      "Healthy_Normal": {
+        "precision": 1.0,
+        "recall": 0.9565217391304348,
+        "f1-score": 0.9777777777777777,
+        "support": 23.0
+      },
+      "Iron_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_A_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_B12_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_C_Deficiency": {
+        "precision": 0.9583333333333334,
+        "recall": 1.0,
+        "f1-score": 0.9787234042553191,
+        "support": 23.0
+      },
+      "Zinc_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "accuracy": 0.9927536231884058,
+      "macro avg": {
+        "precision": 0.9930555555555555,
+        "recall": 0.9927536231884058,
+        "f1-score": 0.9927501970055163,
+        "support": 138.0
+      },
+      "weighted avg": {
+        "precision": 0.9930555555555557,
+        "recall": 0.9927536231884058,
+        "f1-score": 0.992750197005516,
+        "support": 138.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        22,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        23,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        23,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        23,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        23,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        23
+      ]
+    ]
+  },
+  "suspicious_findings_count": 2
+}

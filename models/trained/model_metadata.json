@@ -1,0 +1,192 @@
+{
+  "model_name": "NutriVision AI MobileNetV2 Deficiency Classifier",
+  "model_version": "1.0.0",
+  "model_file": "mobilenetv2_nutrivision_v1.onnx",
+  "framework": "PyTorch / ONNX Opset 14",
+  "architecture": "MobileNetV2 (ImageNet Pretrained Transfer Learning)",
+  "input_tensor_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "classes": [
+    "Healthy_Normal",
+    "Iron_Deficiency",
+    "Vitamin_A_Deficiency",
+    "Vitamin_B12_Deficiency",
+    "Vitamin_C_Deficiency",
+    "Zinc_Deficiency"
+  ],
+  "num_classes": 6,
+  "evaluation_metrics": {
+    "test_loss": 0.0819,
+    "test_accuracy": 0.9928,
+    "classification_report": {
+      "Healthy_Normal": {
+        "precision": 1.0,
+        "recall": 0.9565217391304348,
+        "f1-score": 0.9777777777777777,
+        "support": 23.0
+      },
+      "Iron_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_A_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_B12_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "Vitamin_C_Deficiency": {
+        "precision": 0.9583333333333334,
+        "recall": 1.0,
+        "f1-score": 0.9787234042553191,
+        "support": 23.0
+      },
+      "Zinc_Deficiency": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "accuracy": 0.9927536231884058,
+      "macro avg": {
+        "precision": 0.9930555555555555,
+        "recall": 0.9927536231884058,
+        "f1-score": 0.9927501970055163,
+        "support": 138.0
+      },
+      "weighted avg": {
+        "precision": 0.9930555555555557,
+        "recall": 0.9927536231884058,
+        "f1-score": 0.992750197005516,
+        "support": 138.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        22,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        23,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        23,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        23,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        23,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        23
+      ]
+    ],
+    "test_sample_count": 138
+  },
+  "training_history": {
+    "train_loss": [
+      1.3708,
+      0.6445,
+      0.3325,
+      0.2079,
+      0.1351,
+      0.1082,
+      0.098,
+      0.1032,
+      0.0911,
+      0.0823
+    ],
+    "train_acc": [
+      0.5968,
+      0.8873,
+      0.9143,
+      0.946,
+      0.9667,
+      0.9651,
+      0.9683,
+      0.9635,
+      0.9635,
+      0.9651
+    ],
+    "val_loss": [
+      0.8756,
+      0.3657,
+      0.2009,
+      0.127,
+      0.0989,
+      0.0846,
+      0.083,
+      0.0808,
+      0.081,
+      0.0804
+    ],
+    "val_acc": [
+      0.8788,
+      0.9318,
+      0.9394,
+      0.9621,
+      0.9621,
+      0.9621,
+      0.9621,
+      0.9621,
+      0.9621,
+      0.9621
+    ]
+  },
+  "trained_date": "2026-09-03T16:01:17Z",
+  "medical_disclaimer": "NutriVision AI provides AI-based preliminary screening indicators only. This is not a medical diagnosis."
+}

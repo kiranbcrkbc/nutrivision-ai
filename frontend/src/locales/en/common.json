@@ -1,0 +1,43 @@
+{
+  "brand": "NutriVision AI",
+  "tagline": "AI-Based Preliminary Vitamin Deficiency & Nutrition System",
+  "nav": {
+    "home": "Home",
+    "howItWorks": "How It Works",
+    "about": "About",
+    "disclaimer": "Medical Disclaimer",
+    "login": "Log In",
+    "register": "Get Started",
+    "dashboard": "Dashboard",
+    "newAssessment": "New Assessment",
+    "history": "History",
+    "progress": "Progress",
+    "recommendations": "Food Guidance",
+    "nutritionPlan": "Nutrition Plan",
+    "reports": "Reports",
+    "chatbot": "AI Assistant",
+    "admin": "Admin",
+    "logout": "Log Out"
+  },
+  "disclaimer": {
+    "title": "Medical Safety Notice",
+    "bannerText": "Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment."
+  },
+  "hero": {
+    "badge": "AI-Assisted Preliminary Nutrition Screening",
+    "title": "Smart Preliminary Vitamin & Nutrition Assessment",
+    "subtitle": "Analyze visual body signs and self-reported symptoms to discover potential nutritional indicators and personalized dietary guidance.",
+    "ctaStart": "Start Free Assessment",
+    "ctaLearn": "Learn How It Works"
+  },
+  "common": {
+    "loading": "Loading...",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "back": "Back",
+    "next": "Continue",
+    "modelConfidence": "Model Confidence",
+    "riskLevel": "Risk Level"
+  }
+}

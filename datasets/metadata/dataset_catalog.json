@@ -1,0 +1,99 @@
+{
+  "dataset_name": "NutriVision AI Multi-Class Nutritional Deficiency Benchmark",
+  "version": "1.0.0",
+  "license": "CC-BY-4.0 / Academic Research Permitted",
+  "total_images": 900,
+  "input_dimensions": [
+    224,
+    224,
+    3
+  ],
+  "classes": [
+    "Iron_Deficiency",
+    "Vitamin_B12_Deficiency",
+    "Vitamin_C_Deficiency",
+    "Vitamin_A_Deficiency",
+    "Zinc_Deficiency",
+    "Healthy_Normal"
+  ],
+  "class_descriptions": {
+    "Iron_Deficiency": "Signs of microcytic anemia & iron deficiency: Koilonychia (concave spoon nails), pale conjunctival beds, atrophic lingual pallor.",
+    "Vitamin_B12_Deficiency": "Signs of cobalamin deficiency: Beefy red atrophic glossitis (smooth red tongue with lost papillae), angular cheilitis, knuckle hyperpigmentation.",
+    "Vitamin_C_Deficiency": "Signs of ascorbic acid deficiency (scurvy signs): Perifollicular petechiae, corkscrew hairs, subungual splinter hemorrhages.",
+    "Vitamin_A_Deficiency": "Signs of retinoid deficiency: Phrynoderma (follicular hyperkeratosis with keratin plugs), ocular conjunctival xerosis/Bitot plaques.",
+    "Zinc_Deficiency": "Signs of zinc depletion: Leukonychia totalis/striata (punctate white nail bands), periorificial erythematous plaques, diffuse hair thinning.",
+    "Healthy_Normal": "Normal, well-vascularized visual patterns across nails, eyes, tongue, lips, skin, and hair without signs of nutritional deficiency."
+  },
+  "split_counts": {
+    "train": 630,
+    "val": 132,
+    "test": 138
+  },
+  "class_distributions": {
+    "Iron_Deficiency": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    },
+    "Vitamin_B12_Deficiency": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    },
+    "Vitamin_C_Deficiency": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    },
+    "Vitamin_A_Deficiency": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    },
+    "Zinc_Deficiency": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    },
+    "Healthy_Normal": {
+      "train": 105,
+      "val": 22,
+      "test": 23
+    }
+  },
+  "random_seed": 42,
+  "anatomical_coverage": {
+    "Iron_Deficiency": [
+      "NAILS",
+      "EYES",
+      "TONGUE"
+    ],
+    "Vitamin_B12_Deficiency": [
+      "TONGUE",
+      "SKIN",
+      "LIPS"
+    ],
+    "Vitamin_C_Deficiency": [
+      "SKIN",
+      "NAILS",
+      "LIPS"
+    ],
+    "Vitamin_A_Deficiency": [
+      "SKIN",
+      "EYES"
+    ],
+    "Zinc_Deficiency": [
+      "NAILS",
+      "SKIN",
+      "HAIR"
+    ],
+    "Healthy_Normal": [
+      "NAILS",
+      "EYES",
+      "TONGUE",
+      "LIPS",
+      "SKIN",
+      "HAIR"
+    ]
+  }
+}
