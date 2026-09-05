@@ -1,13 +1,12 @@
 # ==============================================================================
 # NutriVision AI - Render Deployment Blueprint (render.yaml)
-# Deploys: React Frontend (Static Site), Spring Boot API (Docker/Web Service),
-# and FastAPI AI Engine (Docker/Web Service).
+# Custom URLs containing GitHub username: kiranbcrkbc
 # ==============================================================================
 
 services:
   # 1. AI Microservice (FastAPI + OpenCV + MobileNetV2 ONNX)
   - type: web
-    name: nutrivision-ai-service
+    name: kiranbcrkbc-nutrivision-ai-service
     env: docker
     dockerfilePath: ./ai-service/Dockerfile
     dockerContext: ./ai-service
@@ -21,7 +20,7 @@ services:
 
   # 2. Backend Gateway (Spring Boot 3 + Security + JWT)
   - type: web
-    name: nutrivision-backend
+    name: kiranbcrkbc-nutrivision-backend
     env: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
@@ -33,20 +32,20 @@ services:
       - key: AI_SERVICE_BASE_URL
         fromService:
           type: web
-          name: nutrivision-ai-service
+          name: kiranbcrkbc-nutrivision-ai-service
           property: host
       - key: SPRING_DATASOURCE_URL
-        sync: false # Set to your MySQL JDBC URL (e.g. from Aiven Free MySQL / Railway / TiDB)
+        sync: false
       - key: SPRING_DATASOURCE_USERNAME
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: APP_CORS_ALLOWED_ORIGINS
-        value: "https://nutrivision-ai-frontend.onrender.com,http://localhost:5173"
+        value: "https://kiranbcrkbc-nutrivision-ai.onrender.com,https://kiranbcrkbc-nutrivision.onrender.com,http://localhost:5173"
 
   # 3. Frontend UI (React 18 + Vite Static Site)
   - type: web
-    name: nutrivision-ai-frontend
+    name: kiranbcrkbc-nutrivision-ai
     env: static
     rootDir: frontend
     buildCommand: npm install && npm run build
@@ -57,4 +56,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_BASE_URL
-        value: "https://nutrivision-backend.onrender.com/api"
+        value: "https://kiranbcrkbc-nutrivision-backend.onrender.com/api"
