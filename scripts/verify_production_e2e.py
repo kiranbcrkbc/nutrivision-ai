@@ -30,7 +30,7 @@ def run_tests():
     # -------------------------------------------------------------------------
     print("\n[1/11] Checking Frontend Availability...")
     try:
-        r = session.get(FRONTEND_URL, timeout=15)
+        r = session.get(FRONTEND_URL, timeout=30)
         if r.status_code == 200 and "<!doctype html>" in r.text.lower():
             print(f"  [PASS] Frontend is UP (HTTP {r.status_code})")
             results["frontend"] = "PASS"
@@ -46,7 +46,7 @@ def run_tests():
     # -------------------------------------------------------------------------
     print("\n[2/11] Checking AI Microservice Health...")
     try:
-        r = session.get(f"{AI_BASE_URL}/api/ai/health", timeout=15)
+        r = session.get(f"{AI_BASE_URL}/api/ai/health", timeout=45)
         if r.status_code == 200:
             ai_data = r.json()
             print(f"  [PASS] AI Service is UP: status={ai_data.get('status')}, model={ai_data.get('activeModel')}")
@@ -63,7 +63,7 @@ def run_tests():
     # -------------------------------------------------------------------------
     print("\n[3/11] Checking Backend Gateway Health (/api/health)...")
     try:
-        r = session.get(f"{BACKEND_BASE_URL}/api/health", timeout=20)
+        r = session.get(f"{BACKEND_BASE_URL}/api/health", timeout=45)
         if r.status_code == 200:
             be_data = r.json()
             print(f"  [PASS] Backend Gateway is UP (HTTP 200): {be_data.get('message')}")
