@@ -1,15 +1,18 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/nutrivision_db?useSSL=true&requireSSL=true&verifyServerCertificate=true&enabledTLSProtocols=TLSv1.2,TLSv1.3&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:2vsoFfJUyF5U1VJ.root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: 5
+      minimum-idle: 1
       idle-timeout: 30000
-      max-lifetime: 1800000
-      connection-timeout: 20000
+      max-lifetime: 180000
+      keepalive-time: 30000
+      connection-timeout: 30000
+      validation-timeout: 5000
+      connection-test-query: /* ping */ SELECT 1
   jpa:
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
@@ -17,12 +20,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
 
 logging:
   level:
     root: INFO
     com.nutrivision: INFO
     org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    com.zaxxer.hikari: INFO
 
 app:
   cors:
