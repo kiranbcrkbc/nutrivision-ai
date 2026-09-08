@@ -34,7 +34,7 @@ services:
       - key: SPRING_DATASOURCE_URL
         sync: false
       - key: SPRING_DATASOURCE_USERNAME
-        sync: false
+        value: "2vsoFfJUyF5U1VJ.root"
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: APP_CORS_ALLOWED_ORIGINS
