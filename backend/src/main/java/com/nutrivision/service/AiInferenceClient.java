@@ -28,7 +28,7 @@ public class AiInferenceClient {
     public AiInferenceClient(
             @Value("${app.ai-service.url:http://localhost:8000}") String aiServiceBaseUrl,
             @Value("${app.ai-service.timeout-ms:15000}") int timeoutMs) {
-        this.aiServiceBaseUrl = aiServiceBaseUrl.replaceAll("/+$", "");
+        this.aiServiceBaseUrl = normalizeUrl(aiServiceBaseUrl);
 
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(timeoutMs);
@@ -36,6 +36,25 @@ public class AiInferenceClient {
         this.restTemplate = new RestTemplate(factory);
 
         log.info("Initialized AiInferenceClient pointing to: {} (timeout: {}ms)", this.aiServiceBaseUrl, timeoutMs);
+    }
+
+    private static String normalizeUrl(String rawUrl) {
+        if (rawUrl == null || rawUrl.isBlank()) {
+            return "http://localhost:8000";
+        }
+        String url = rawUrl.trim().replaceAll("/+$", "");
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            if (!url.contains("localhost") && !url.contains("127.0.0.1")) {
+                url = "https://" + url;
+            } else {
+                url = "http://" + url;
+            }
+        }
+        String host = url.replaceFirst("^https?://", "").split("/")[0].split(":")[0];
+        if (!host.contains(".") && !host.equalsIgnoreCase("localhost") && !host.equalsIgnoreCase("127.0.0.1") && !url.contains(":8000")) {
+            url = url.replaceFirst(host, host + ".onrender.com");
+        }
+        return url;
     }
 
     /**
