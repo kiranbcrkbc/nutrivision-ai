@@ -33,4 +33,7 @@ logging:
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,https://*.onrender.com,https://*.vercel.app}
+  ai-service:
+    url: ${AI_SERVICE_BASE_URL:https://kiranbcrkbc-nutrivision-ai-service.onrender.com}
+    timeout-ms: ${AI_SERVICE_TIMEOUT_MS:25000}
 
