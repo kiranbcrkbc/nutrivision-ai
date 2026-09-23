@@ -31,6 +31,7 @@ import { RecommendationsPage } from './pages/dashboard/RecommendationsPage';
 import { NutritionPlanPage } from './pages/dashboard/NutritionPlanPage';
 import { ReportsPage } from './pages/dashboard/ReportsPage';
 import { ChatbotPage } from './pages/dashboard/ChatbotPage';
+import { FindDoctorPage } from './pages/referrals/FindDoctorPage';
 import { ProfilePage } from './pages/dashboard/ProfilePage';
 import { SettingsPage } from './pages/dashboard/SettingsPage';
 import { DevStatusPage } from './pages/dashboard/DevStatusPage';
@@ -47,6 +48,7 @@ export const App: React.FC = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/demo" element={<DemoModePage />} />
+          <Route path="/doctors" element={<FindDoctorPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -71,6 +73,7 @@ export const App: React.FC = () => {
           <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/nutrition-plan" element={<NutritionPlanPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/doctors" element={<FindDoctorPage />} />
           <Route path="/chatbot" element={<ChatbotPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />

@@ -33,6 +33,7 @@ export interface AuthState {
 
 export interface PredictionItem {
   rank: number;
+  categoryCode?: string;
   deficiencyCategory: string;
   modelConfidence: number; // 0.0 to 1.0
   confidencePercentage: string; // e.g. "82.4%"

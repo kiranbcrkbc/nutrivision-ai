@@ -348,7 +348,7 @@ export const DemoModePage: React.FC = () => {
           <span>DEMONSTRATION DATA — NOT REAL PATIENT DATA</span>
         </div>
         <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-300">
-          This demonstration mode is designed exclusively for college viva presentations and technical evaluation. All samples represent synthetic prototype benchmark patterns. NutriVision AI is an educational screening prototype and <strong>does not make medical diagnoses</strong>.
+          <strong>These are demonstration cases created for academic presentation.</strong> This demonstration mode is designed exclusively for college viva presentations and technical evaluation. All samples represent synthetic prototype benchmark patterns. NutriVision AI is an educational screening prototype and <strong>does not make medical diagnoses</strong>.
         </p>
       </div>
 

@@ -13,10 +13,10 @@ export const PublicLayout: React.FC = () => {
 
   const navLinks = [
     { name: t('nav.home', 'Home'), path: '/' },
-    { name: 'Demo Mode 🎓', path: '/demo' },
     { name: t('nav.howItWorks', 'How It Works'), path: '/how-it-works' },
     { name: t('nav.about', 'About'), path: '/about' },
-    { name: t('nav.disclaimer', 'Disclaimer'), path: '/disclaimer' },
+    { name: 'Try Demo 🎓', path: '/demo' },
+    { name: 'Find a Doctor', path: '/doctors' },
   ];
 
   const isActive = (path: string) => location.pathname === path;

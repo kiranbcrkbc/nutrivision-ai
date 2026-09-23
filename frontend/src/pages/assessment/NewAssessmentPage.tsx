@@ -29,6 +29,7 @@ import { CameraCapture } from '../../components/common/CameraCapture';
 import { BodyPart, Assessment, AssessmentImage, InferenceResponse } from '../../types';
 import { assessmentService } from '../../services/assessmentService';
 import { showToast } from '../../services/toastStore';
+import { PreliminaryResultView } from '../../components/assessment/PreliminaryResultView';
 
 export const NewAssessmentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -48,14 +49,14 @@ export const NewAssessmentPage: React.FC = () => {
   const [showCameraModal, setShowCameraModal] = useState<boolean>(false);
 
 
-  // Anatomical Region Options
+  // Anatomical Region Options (Section 6)
   const bodyParts = [
-    { id: 'NAILS' as BodyPart, name: 'Nails', icon: <Hand className="w-7 h-7" />, desc: 'Screen for spooning (koilonychia), brittleness, leukonychia, or pale nail beds.' },
-    { id: 'EYES' as BodyPart, name: 'Eyes', icon: <Eye className="w-7 h-7" />, desc: 'Screen for conjunctival pallor, Bitot’s spots, and ocular surface dryness.' },
-    { id: 'TONGUE' as BodyPart, name: 'Tongue', icon: <Smile className="w-7 h-7" />, desc: 'Screen for glossitis (swollen red tongue), surface pallor, and papillae changes.' },
-    { id: 'LIPS' as BodyPart, name: 'Lips', icon: <Smile className="w-7 h-7" />, desc: 'Screen for angular cheilitis (cracked mouth corners) and chronic dryness.' },
-    { id: 'SKIN' as BodyPart, name: 'Skin', icon: <HeartPulse className="w-7 h-7" />, desc: 'Screen for follicular hyperkeratosis, slow wound repair, and patchy pigment.' },
-    { id: 'HAIR' as BodyPart, name: 'Hair', icon: <Sparkles className="w-7 h-7" />, desc: 'Screen for diffuse thinning, brittle texture, and premature pigment changes.' },
+    { id: 'EYES' as BodyPart, name: 'Eyes', icon: <Eye className="w-7 h-7" />, desc: 'Take a clear photo of the visible eye area and lower eyelid in good lighting.' },
+    { id: 'TONGUE' as BodyPart, name: 'Tongue', icon: <Smile className="w-7 h-7" />, desc: 'Take a clear photo of the tongue surface in good lighting.' },
+    { id: 'NAILS' as BodyPart, name: 'Nails', icon: <Hand className="w-7 h-7" />, desc: 'Upload a clear photo of your fingernails.' },
+    { id: 'LIPS' as BodyPart, name: 'Lips', icon: <Smile className="w-7 h-7" />, desc: 'Take a clear photo of the mouth corners and lips.' },
+    { id: 'SKIN' as BodyPart, name: 'Skin', icon: <HeartPulse className="w-7 h-7" />, desc: 'Take a clear photo of the affected skin area in bright light.' },
+    { id: 'HAIR' as BodyPart, name: 'Hair', icon: <Sparkles className="w-7 h-7" />, desc: 'Take a clear photo of the visible hair or scalp.' },
   ];
 
   // Symptom Catalog per Body Part
@@ -300,9 +301,14 @@ export const NewAssessmentPage: React.FC = () => {
       {/* STEP 1: Anatomy Selection */}
       {currentStep === 1 && (
         <div className="space-y-6 animate-fadeIn">
-          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-            Select the Anatomical Region for Evaluation:
-          </h3>
+          <div className="space-y-1">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+              What are you uploading?
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Select the body area you would like to screen today.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {bodyParts.map((bp) => {
@@ -680,115 +686,39 @@ export const NewAssessmentPage: React.FC = () => {
         </Card>
       )}
 
-      {/* STEP 6: Preliminary Results & Inference Status */}
+      {/* STEP 6: Understandable Preliminary Results & Immediate Food Guidance */}
       {currentStep === 6 && (
         <div className="space-y-6 animate-fadeIn">
-          <Card variant="default" className="p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={screeningResult?.modelAvailable ? "success" : "warning"} size="md">
-                    {screeningResult?.modelAvailable ? "AI Screening Complete" : "Quality Verified • Model Pending"}
-                  </Badge>
-                  <span className="text-xs text-slate-400">Session #{assessment?.assessmentId}</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-                  Preliminary Assessment Summary
-                </h3>
-              </div>
-              <div className="flex gap-2">
-                <Link to="/recommendations">
-                  <Button variant="primary" size="sm" leftIcon={<Utensils className="w-4 h-4" />}>
-                    Diet Plan
-                  </Button>
-                </Link>
-                <Link to="/reports">
-                  <Button variant="outline" size="sm" leftIcon={<Download className="w-4 h-4" />}>
-                    Export PDF
-                  </Button>
-                </Link>
-              </div>
-            </div>
+          <PreliminaryResultView
+            screeningResult={screeningResult}
+            assessment={assessment}
+            uploadedImage={uploadedImage}
+            selectedBodyPart={selectedBodyPart}
+            selectedSymptoms={selectedSymptoms}
+          />
 
-            {/* If Real Model Predictions are Available */}
-            {screeningResult?.modelAvailable && screeningResult?.predictions && screeningResult.predictions.length > 0 ? (
-              <div className="space-y-3">
-                <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                  AI Model Screening Candidates ({screeningResult.modelName || 'Deep Learning Model'}):
-                </h4>
-
-                {screeningResult.predictions.map((pred, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-xl border flex items-center justify-between ${
-                      idx === 0
-                        ? 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700'
-                        : 'bg-slate-50/50 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/60'
-                    }`}
-                  >
-                    <div>
-                      <span className={`text-xs font-bold block ${idx === 0 ? 'text-health-600' : 'text-slate-400'}`}>
-                        #{pred.rank} {idx === 0 ? 'Primary Indicator' : 'Candidate'}
-                      </span>
-                      <p className={`font-bold text-slate-900 dark:text-slate-100 ${idx === 0 ? 'text-sm' : 'text-xs'}`}>
-                        {pred.deficiencyCategory}
-                      </p>
-                      {pred.possiblePatternDescription && (
-                        <p className="text-[11px] text-slate-500 mt-0.5">{pred.possiblePatternDescription}</p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs text-slate-400 block">Model Confidence</span>
-                      <strong className={`font-bold ${idx === 0 ? 'text-sm text-health-600' : 'text-xs text-slate-700 dark:text-slate-300'}`}>
-                        {pred.confidencePercentage}
-                      </strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* Honest Inference Foundation Status (When No Trained Model Weights Exist) */
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-2">
-                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-600" />
-                    <span className="text-sm font-bold">Image Quality Verified — AI Classification Model Pending</span>
-                  </div>
-                  <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-                    The OpenCV image processing pipeline verified technical sharpness and illumination. The AI inference foundation is fully ready, and deep learning classification weights are pending deployment. In accordance with medical safety principles, <strong>no simulated or random diagnostic predictions are generated</strong>.
-                  </p>
-                </div>
-
-                {/* Technical Quality & Assessment Telemetry */}
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-                  <h4 className="font-bold text-slate-900 dark:text-slate-100 text-xs">Technical Assessment Verification Telemetry:</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                    <p>• Target Anatomical Region: <strong className="text-slate-900 dark:text-slate-100">{selectedBodyPart}</strong></p>
-                    <p>• Photographic Quality Status: <strong className="text-emerald-600 dark:text-emerald-400">{uploadedImage?.qualityStatus || 'PASSED'}</strong></p>
-                    <p>• Sharpness (Laplacian Variance): <strong className="text-slate-900 dark:text-slate-100">{uploadedImage?.blurScore ?? 'Verified'}</strong> (Threshold: &ge; 100.0)</p>
-                    <p>• Lighting (Mean Luminance): <strong className="text-slate-900 dark:text-slate-100">{uploadedImage?.brightnessScore ?? 'Verified'}</strong> (Range: 40 - 220)</p>
-                    <p>• Inference Foundation Status: <strong className="text-slate-900 dark:text-slate-100">{screeningResult?.inferenceStatus || 'MODEL_NOT_CONFIGURED'}</strong></p>
-                    <p>• Reported Symptoms: <strong className="text-slate-900 dark:text-slate-100">{selectedSymptoms.length > 0 ? selectedSymptoms.length : '0 (Visual screening only)'}</strong></p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Doctor Referral Note */}
-            <div className="p-4 rounded-xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/60 text-xs text-teal-800 dark:text-teal-300 space-y-1">
-              <strong className="block font-bold">Clinical Care & Medical Guidance:</strong>
-              <p>
-                NutriVision AI provides preliminary screening indicators only. Please discuss any nutritional concerns with a <strong>Registered Dietitian</strong> or <strong>General Physician</strong>. Complete blood profiles (e.g., CBC, Serum Ferritin, 25-OH Vitamin D) are necessary for definitive medical diagnosis.
-              </p>
-            </div>
-          </Card>
-
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
             <Link to="/dashboard">
-              <Button variant="primary" size="md">
+              <Button variant="outline" size="md" className="w-full sm:w-auto">
                 Return to Dashboard
               </Button>
             </Link>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => {
+                setAssessment(null);
+                setUploadedImage(null);
+                setPreviewUrl(null);
+                setSelectedSymptoms([]);
+                setConsentAcknowledged(false);
+                setScreeningResult(null);
+                setCurrentStep(1);
+              }}
+              className="w-full sm:w-auto"
+            >
+              Start Another Assessment
+            </Button>
           </div>
         </div>
       )}

@@ -12,6 +12,16 @@
 
 ---
 
+## 🌐 Live Production Deployments
+
+* **Public GitHub Repository:** [https://github.com/kiranbcrkbc/nutrivision-ai](https://github.com/kiranbcrkbc/nutrivision-ai)
+* **Live Website (Frontend UI):** [https://kiranbcrkbc-nutrivision-ai.onrender.com](https://kiranbcrkbc-nutrivision-ai.onrender.com)
+* **Live Backend API Gateway:** [https://kiranbcrkbc-nutrivision-backend.onrender.com](https://kiranbcrkbc-nutrivision-backend.onrender.com)
+* **Live AI Microservice (MobileNetV2 ONNX):** [https://kiranbcrkbc-nutrivision-ai-service.onrender.com](https://kiranbcrkbc-nutrivision-ai-service.onrender.com)
+* **Cloud Database:** TiDB Cloud Serverless (MySQL 8.0 compatible, TLS secured)
+
+---
+
 ## ⚠️ Mandatory Medical & Dataset Disclosure
 
 > [!IMPORTANT]

@@ -83,6 +83,8 @@ public class SecurityConfig {
                     "/api/nutrition/categories",
                     "/api/nutrition/guidance/**",
                     "/api/nutrition/recommendations/**",
+                    "/api/doctors/**",
+                    "/api/chat/**",
                     "/error"
                 ).permitAll()
 

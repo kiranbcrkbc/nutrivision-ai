@@ -17,6 +17,7 @@ import {
   X,
   Activity,
   ActivitySquare,
+  MapPin,
 } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { LanguageSelector } from '../common/LanguageSelector';
@@ -30,16 +31,16 @@ export const AppLayout: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Clean Navigation Structure (Section 17)
   const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: 'Demo Mode 🎓', path: '/demo', icon: <Activity className="w-5 h-5 text-amber-500" /> },
-    { label: 'New Assessment', path: '/assessment/new', icon: <PlusCircle className="w-5 h-5" /> },
-    { label: 'Assessment History', path: '/history', icon: <History className="w-5 h-5" /> },
-    { label: 'Progress Trends', path: '/progress', icon: <TrendingUp className="w-5 h-5" /> },
-    { label: 'Recommendations', path: '/recommendations', icon: <Utensils className="w-5 h-5" /> },
-    { label: '7-Day Meal Plan', path: '/nutrition-plan', icon: <CalendarDays className="w-5 h-5" /> },
-    { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
-    { label: 'AI Chatbot', path: '/chatbot', icon: <MessageSquare className="w-5 h-5" /> },
+    { label: 'Home', path: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { label: 'Check', path: '/assessment/new', icon: <PlusCircle className="w-5 h-5" /> },
+    { label: 'My Results', path: '/history', icon: <History className="w-5 h-5" /> },
+    { label: 'Nutrition', path: '/recommendations', icon: <Utensils className="w-5 h-5" /> },
+    { label: 'Find a Doctor', path: '/doctors', icon: <MapPin className="w-5 h-5" /> },
+    { label: 'AI Assistant', path: '/chatbot', icon: <MessageSquare className="w-5 h-5" /> },
+    { label: 'College Demo 🎓', path: '/demo', icon: <Activity className="w-5 h-5 text-amber-500" /> },
+    { label: 'About', path: '/about', icon: <FileText className="w-5 h-5" /> },
   ];
 
   const adminItems = [

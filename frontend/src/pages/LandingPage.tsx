@@ -75,21 +75,21 @@ export const LandingPage: React.FC = () => {
                 Empowering individuals with fast, non-invasive screening of visual deficiency indicators paired with personalized, culturally adaptable dietary recommendations.
               </p>
 
-              {/* CTAs */}
+              {/* CTAs (Section 16) */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
-                <Link to="/demo" className="w-full sm:w-auto">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md hover:shadow-health-glow bg-amber-600 hover:bg-amber-700 text-white border-amber-600" rightIcon={<Flame className="w-5 h-5 text-amber-200" />}>
-                    Live Demo Mode 🎓
-                  </Button>
-                </Link>
-                <Link to="/register" className="w-full sm:w-auto">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md hover:shadow-health-glow" rightIcon={<ArrowRight className="w-5 h-5" />}>
-                    Start Free Assessment
+                <Link to="/assessment/new" className="w-full sm:w-auto">
+                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md hover:shadow-health-glow font-bold" rightIcon={<ArrowRight className="w-5 h-5" />}>
+                    Check for Possible Nutritional Signs
                   </Button>
                 </Link>
                 <Link to="/how-it-works" className="w-full sm:w-auto">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    How It Works
+                    Learn How It Works
+                  </Button>
+                </Link>
+                <Link to="/demo" className="w-full sm:w-auto">
+                  <Button variant="ghost" size="lg" className="w-full sm:w-auto text-amber-600 hover:text-amber-700 dark:text-amber-400" rightIcon={<Flame className="w-4 h-4 text-amber-500" />}>
+                    College Demo 🎓
                   </Button>
                 </Link>
               </div>
