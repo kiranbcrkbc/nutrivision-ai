@@ -59,7 +59,7 @@ export const RegisterPage: React.FC = () => {
 
     try {
       await register(fullName, email, password, confirmPassword);
-      showToast.success('Account Created', `Welcome to NutriVision AI, ${fullName}!`);
+      showToast.success('Account Created', `Welcome to Vitamin Deficiency, ${fullName}!`);
       navigate('/dashboard');
     } catch (err: any) {
       const errorMsg = err.message || 'Registration failed. Please check inputs.';
@@ -78,7 +78,7 @@ export const RegisterPage: React.FC = () => {
             <Activity className="w-6 h-6" />
           </div>
           <span className="font-bold text-xl text-slate-900 dark:text-slate-100 tracking-tight">
-            NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+            Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
           </span>
         </Link>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
@@ -145,7 +145,7 @@ export const RegisterPage: React.FC = () => {
                   className="mt-0.5 rounded text-health-600 focus:ring-health-500 border-slate-300 dark:border-slate-700 dark:bg-slate-800"
                 />
                 <span>
-                  I understand that NutriVision AI is an educational prototype providing preliminary indicators only, and is NOT a substitute for clinical medical diagnosis.
+                  I understand that Vitamin Deficiency is an educational prototype providing preliminary indicators only, and is NOT a substitute for clinical medical diagnosis.
                 </span>
               </label>
               {errors.agreeTerms && (

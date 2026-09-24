@@ -1,5 +1,5 @@
 """
-NutriVision AI - Core Configuration
+Vitamin Deficiency - Core Configuration
 """
 
 import os
@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class Settings(BaseModel):
-    app_name: str = "NutriVision AI ML Engine"
+    app_name: str = "Vitamin Deficiency ML Engine"
     app_env: str = Field(default_factory=lambda: os.getenv("APP_ENV", "development"))
     host: str = Field(default_factory=lambda: os.getenv("HOST", "127.0.0.1"))
     port: int = Field(default_factory=lambda: int(os.getenv("PORT", "8000")))

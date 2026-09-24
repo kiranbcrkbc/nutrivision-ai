@@ -1,5 +1,5 @@
 """
-NutriVision AI - Inference Service
+Vitamin Deficiency - Inference Service
 Orchestrates image quality evaluation, model readiness checks, and screening inference.
 Enforces medical safety: never generates fake medical diagnoses or random predictions.
 """
@@ -28,6 +28,9 @@ def run_screening_inference(
     5. Returns structured JSON with safe preliminary screening phrasing.
     """
     normalized_body_part = (target_body_part or "GENERAL").upper().strip()
+    if normalized_body_part not in {"EYES", "TONGUE", "NAILS", "LIPS", "SKIN", "HAIR", "FACE"}:
+        return InferenceResponse(status="INVALID_BODY_PART", inferenceStatus="INVALID_BODY_PART",
+                                 message="Select eyes, tongue, nails, lips, skin, or hair before submitting.")
 
     # Step 1: Quality Evaluation
     quality_res: ImageQualityResponse = evaluate_image_quality(image_bytes)
@@ -45,6 +48,19 @@ def run_screening_inference(
             topPrediction=None,
             explainabilityStatus="EXPLAINABILITY_NOT_AVAILABLE",
             message=quality_res.rejectionReason or "Image quality does not meet technical sharpness or illumination requirements."
+        )
+
+    # Sharpness and lighting do not establish anatomy or medical validity.
+    if not model_service.is_screening_validated():
+        return InferenceResponse(
+            status="SCREENING_UNAVAILABLE", modelAvailable=False,
+            modelStatus="NOT_VALIDATED", inferenceStatus="SCREENING_UNAVAILABLE",
+            targetBodyPart=normalized_body_part, qualityEvaluation=quality_res,
+            predictions=[], topPrediction=None,
+            message="We checked photo quality, but cannot verify that it shows the selected body area "
+                    "or reliably identify a deficiency. The current model was trained on synthetic drawings, "
+                    "not validated patient photographs. No medical prediction has been made. "
+                    "You can explore nutrition information or discuss persistent symptoms with a clinician."
         )
 
     # Step 3: Check Model Availability
@@ -97,6 +113,5 @@ def run_screening_inference(
             predictions=[],
             topPrediction=None,
             explainabilityStatus="EXPLAINABILITY_NOT_AVAILABLE",
-            message=f"Inference execution failed: {str(e)}"
+            message="Photo analysis could not be completed. Please try again later."
         )
-

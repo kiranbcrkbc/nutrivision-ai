@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Hand,
@@ -48,6 +48,8 @@ export const NewAssessmentPage: React.FC = () => {
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [showCameraModal, setShowCameraModal] = useState<boolean>(false);
 
+
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
 
   // Anatomical Region Options (Section 6)
   const bodyParts = [
@@ -142,6 +144,8 @@ export const NewAssessmentPage: React.FC = () => {
       return;
     }
 
+    setUploadedImage(null);
+    setScreeningResult(null);
     setIsUploading(true);
     setShowCameraModal(false);
     try {
@@ -237,27 +241,15 @@ export const NewAssessmentPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const updated = await assessmentService.updateStatus(
-        assessment.assessmentId,
-        'COMPLETED',
-        'MODERATE_CONCERN'
-      );
-      setAssessment(updated);
-
-      // Execute preliminary screening call through inference foundation
-      if (uploadedImage) {
-        try {
-          const screenRes = await assessmentService.screenAssessment(
-            assessment.assessmentId,
-            uploadedImage.imageId
-          );
-          setScreeningResult(screenRes);
-        } catch (screenErr) {
-          console.warn('Screening call warning:', screenErr);
-        }
+      if (!uploadedImage || !consentAcknowledged) return;
+      const result = await assessmentService.screenAssessment(assessment.assessmentId, uploadedImage.imageId, selectedSymptoms);
+      setScreeningResult(result);
+      setAssessment(await assessmentService.getAssessmentById(assessment.assessmentId));
+      if (result.status === 'SUCCESS') {
+        showToast.success('Assessment saved', 'Your screening result has been saved.');
+      } else {
+        showToast.info('No prediction made', result.message || 'Photo analysis is unavailable.');
       }
-
-      showToast.success('Assessment Complete', 'Assessment recorded and evaluated.');
       setCurrentStep(6);
     } catch (err: any) {
       showToast.error('Update Error', err.response?.data?.message || err.message || 'Failed to complete assessment.');
@@ -279,7 +271,7 @@ export const NewAssessmentPage: React.FC = () => {
               : currentStep === 2
               ? 'Photo Upload & Capture'
               : currentStep === 3
-              ? 'AI Image Quality Evaluation'
+              ? 'Photo quality check'
               : currentStep === 4
               ? 'Symptom Questionnaire'
               : currentStep === 5
@@ -448,7 +440,7 @@ export const NewAssessmentPage: React.FC = () => {
       {currentStep === 3 && (
         <Card variant="default" className="p-8 space-y-6 animate-fadeIn">
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            OpenCV Image Quality Analysis
+            Photo quality check
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -587,7 +579,7 @@ export const NewAssessmentPage: React.FC = () => {
               Symptom Questionnaire ({selectedBodyPart})
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Select any symptoms you are currently experiencing to correlate with visual analysis.
+              Select symptoms to save with your record. These will not be interpreted as findings from your photo.
             </p>
           </div>
 
@@ -663,7 +655,7 @@ export const NewAssessmentPage: React.FC = () => {
                 className="mt-0.5 rounded text-amber-600 focus:ring-amber-500"
               />
               <span>
-                I acknowledge that NutriVision AI outputs are statistical <strong>Model Confidence</strong> indicators for educational screening and <strong>NOT medical diagnoses</strong>. I will consult a doctor for clinical diagnosis.
+                I understand that photo quality checks do not identify a deficiency. The current model is not validated for photo screening, and this record is <strong>not a medical diagnosis</strong>.
               </span>
             </label>
           </div>
@@ -680,7 +672,7 @@ export const NewAssessmentPage: React.FC = () => {
               onClick={handleCompleteAssessment}
               rightIcon={<ArrowRight className="w-5 h-5" />}
             >
-              Generate Preliminary Results
+              Save and check assessment
             </Button>
           </div>
         </Card>
@@ -725,4 +717,3 @@ export const NewAssessmentPage: React.FC = () => {
     </div>
   );
 };
-

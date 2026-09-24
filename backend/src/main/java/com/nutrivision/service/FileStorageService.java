@@ -153,7 +153,8 @@ public class FileStorageService {
             return true;
         }
         // WEBP / RIFF: 52 49 46 46 (0x52 'I' 'F' 'F')
-        if (header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46) {
+        if (header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46
+                && header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P') {
             return true;
         }
         return false;

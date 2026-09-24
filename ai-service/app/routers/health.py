@@ -1,5 +1,5 @@
 """
-NutriVision AI - Health & System Status Router
+Vitamin Deficiency - Health & System Status Router
 """
 
 from fastapi import APIRouter
@@ -17,6 +17,8 @@ class HealthResponse(BaseModel):
     imageQualityEngine: str
     inferenceModel: str
     modelAvailable: bool
+    screeningAvailable: bool = False
+    validationNote: str = "Synthetic demonstration model; photo screening is not validated."
     activeModel: Optional[str] = None
     disclaimer: str
 
@@ -29,7 +31,8 @@ def get_simple_health() -> Dict[str, Any]:
         "status": "UP",
         "imageQualityEngine": "READY",
         "inferenceModel": model_service.get_model_status(),
-        "modelAvailable": model_service.is_model_ready()
+        "modelAvailable": model_service.is_model_ready(),
+        "screeningAvailable": model_service.is_screening_validated()
     }
 
 
@@ -39,15 +42,14 @@ def get_detailed_health() -> HealthResponse:
     meta = model_service.get_metadata()
     return HealthResponse(
         status="UP",
-        service="NutriVision AI Inference Engine",
+        service="Vitamin Deficiency Inference Engine",
         version="1.0.0",
         imageQualityEngine="READY",
         inferenceModel=model_service.get_model_status(),
         modelAvailable=model_service.is_model_ready(),
         activeModel=meta.get("model_name"),
         disclaimer=(
-            "Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. "
+            "Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. "
             "They are not medically certified diagnoses."
         )
     )
-

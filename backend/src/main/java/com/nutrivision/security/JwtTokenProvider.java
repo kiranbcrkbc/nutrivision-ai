@@ -20,9 +20,18 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    // Default 256-bit development secret for fallback if not provided in environment
-    @Value("${app.jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
+    @Value("${app.jwt.secret:}")
     private String jwtSecret;
+
+    @jakarta.annotation.PostConstruct
+    void initializeKey() {
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            // Production configuration requires APP_JWT_SECRET. Local runs get
+            // a fresh random key instead of a publicly known signing secret.
+            jwtSecret = io.jsonwebtoken.io.Encoders.BASE64.encode(Jwts.SIG.HS256.key().build().getEncoded());
+        }
+        getSigningKey(); // Fail startup on malformed or undersized configured keys.
+    }
 
     @Value("${app.jwt.expiration-ms:86400000}") // 24 hours default
     private long jwtExpirationMs;

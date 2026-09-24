@@ -38,8 +38,9 @@ export const AppLayout: React.FC = () => {
     { label: 'My Results', path: '/history', icon: <History className="w-5 h-5" /> },
     { label: 'Nutrition', path: '/recommendations', icon: <Utensils className="w-5 h-5" /> },
     { label: 'Find a Doctor', path: '/doctors', icon: <MapPin className="w-5 h-5" /> },
-    { label: 'AI Assistant', path: '/chatbot', icon: <MessageSquare className="w-5 h-5" /> },
-    { label: 'College Demo 🎓', path: '/demo', icon: <Activity className="w-5 h-5 text-amber-500" /> },
+    { label: 'Nutrition questions', path: '/chatbot', icon: <MessageSquare className="w-5 h-5" /> },
+    { label: 'Activity chart', path: '/progress', icon: <Activity className="w-5 h-5" /> },
+    { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
     { label: 'About', path: '/about', icon: <FileText className="w-5 h-5" /> },
   ];
 
@@ -71,7 +72,7 @@ export const AppLayout: React.FC = () => {
             <Activity className="w-5 h-5" />
           </div>
           <span className="font-bold text-slate-900 dark:text-slate-100">
-            NutriVision <span className="text-health-600">AI</span>
+            Vitamin <span className="text-health-600">Deficiency</span>
           </span>
         </Link>
 
@@ -100,7 +101,7 @@ export const AppLayout: React.FC = () => {
               <Activity className="w-5 h-5" />
             </div>
             <span className="font-bold text-lg text-slate-900 dark:text-slate-100 tracking-tight">
-              NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+              Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
             </span>
           </Link>
 

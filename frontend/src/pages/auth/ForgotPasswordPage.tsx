@@ -35,7 +35,7 @@ export const ForgotPasswordPage: React.FC = () => {
             <Activity className="w-6 h-6" />
           </div>
           <span className="font-bold text-xl text-slate-900 dark:text-slate-100 tracking-tight">
-            NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+            Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
           </span>
         </Link>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">

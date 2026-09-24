@@ -1,5 +1,5 @@
 """
-NutriVision AI - Inference Router
+Vitamin Deficiency - Inference Router
 Exposes endpoints for AI-based preliminary visual pattern screening.
 """
 
@@ -28,7 +28,9 @@ async def analyze_deficiency_screening(
         )
 
     try:
-        image_bytes = await file.read()
+        image_bytes = await file.read(10 * 1024 * 1024 + 1)
+        if len(image_bytes) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Please upload an image smaller than 10 MB.")
         if not image_bytes or len(image_bytes) == 0:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -42,5 +44,5 @@ async def analyze_deficiency_screening(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Inference request processing failed: {str(e)}"
+            detail="Unable to process this photograph. Please try a different image."
         )

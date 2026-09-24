@@ -46,7 +46,7 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login(email, password);
-      showToast.success('Login Successful', 'Welcome back to NutriVision AI.');
+      showToast.success('Login Successful', 'Welcome back to Vitamin Deficiency.');
       navigate(from, { replace: true });
     } catch (err: any) {
       const errorMsg = err.message || 'Invalid email or password. Please verify credentials.';
@@ -65,7 +65,7 @@ export const LoginPage: React.FC = () => {
             <Activity className="w-6 h-6" />
           </div>
           <span className="font-bold text-xl text-slate-900 dark:text-slate-100 tracking-tight">
-            NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+            Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
           </span>
         </Link>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
@@ -141,7 +141,7 @@ export const LoginPage: React.FC = () => {
         {/* Development Helper Badge */}
         <div className="mt-4 p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-health-600" />
-          <span>Real MySQL Authentication Active • Admin: admin@nutrivision.ai</span>
+          <span>Sign in to your personal account</span>
         </div>
       </div>
     </div>

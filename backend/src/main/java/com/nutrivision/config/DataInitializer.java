@@ -28,10 +28,10 @@ public class DataInitializer implements CommandLineRunner {
     @Value("${app.admin.bootstrap.email:admin@nutrivision.ai}")
     private String adminEmail;
 
-    @Value("${app.admin.bootstrap.password:Admin@NutriVision2026}")
+    @Value("${app.admin.bootstrap.password:}")
     private String adminPassword;
 
-    @Value("${app.admin.bootstrap.enabled:true}")
+    @Value("${app.admin.bootstrap.enabled:false}")
     private boolean bootstrapEnabled;
 
     public DataInitializer(RoleRepository roleRepository,
@@ -47,6 +47,9 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         initializeRoles();
         if (bootstrapEnabled) {
+            if (adminPassword == null || adminPassword.length() < 16) {
+                throw new IllegalStateException("Admin bootstrap requires an explicit strong password of at least 16 characters.");
+            }
             initializeAdminUser();
         }
     }

@@ -44,8 +44,8 @@ export const PreliminaryResultView: React.FC<PreliminaryResultViewProps> = ({
 }) => {
   // Determine top prediction
   const topPrediction = screeningResult?.predictions?.[0];
-  const categoryCode = topPrediction?.categoryCode || 'Healthy_Normal';
-  const confidenceScore = topPrediction?.modelConfidence ?? 0.65;
+  const categoryCode = topPrediction?.categoryCode || '';
+  const confidenceScore = topPrediction?.modelConfidence ?? 0;
 
   const profile: NutrientProfile = getNutrientProfile(categoryCode);
   const confidenceMeta = formatHumanConfidence(confidenceScore);
@@ -66,6 +66,22 @@ export const PreliminaryResultView: React.FC<PreliminaryResultViewProps> = ({
       ...profile.foods.nonVegetarian,
     ];
   };
+
+  if (screeningResult?.status !== 'SUCCESS' || !topPrediction) {
+    return <Card className="p-6 sm:p-8 space-y-5 max-w-3xl mx-auto">
+      <AlertCircle className="w-9 h-9 text-amber-600" />
+      <h2 className="text-2xl font-bold">No reliable photo result available</h2>
+      <p className="text-slate-600 dark:text-slate-300">{screeningResult?.message || 'The analysis did not return a result. Please try again later.'}</p>
+      <p className="text-sm">A photo quality check only measures lighting and sharpness. It does not confirm the body area or a deficiency. No confidence score or risk level has been assigned.</p>
+      {selectedSymptoms.length > 0 && <div><h3 className="font-semibold">Symptoms you selected</h3><ul className="list-disc pl-5">{selectedSymptoms.map(s => <li key={s}>{s}</li>)}</ul><p className="text-sm mt-2">These are self-reported symptoms, not findings from your photo.</p></div>}
+      <div className="flex flex-wrap gap-3">
+        <Link to="/recommendations"><Button>Explore food guidance</Button></Link>
+        <Link to="/doctors"><Button variant="secondary">Find a clinician</Button></Link>
+        <Link to="/history"><Button variant="secondary">View saved record</Button></Link>
+      </div>
+      <p className="text-xs text-slate-500">Educational information only. Persistent symptoms need professional evaluation.</p>
+    </Card>;
+  }
 
   return (
     <div className="space-y-8 animate-fadeIn max-w-4xl mx-auto">
@@ -147,7 +163,7 @@ export const PreliminaryResultView: React.FC<PreliminaryResultViewProps> = ({
           <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <div className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
             <strong className="font-bold block mb-0.5">IMPORTANT SAFETY NOTICE:</strong>
-            {profile.importantNotice} NutriVision AI provides preliminary AI-based educational indications only. It cannot confirm a diagnosis or replace a clinical blood test.
+            {profile.importantNotice} Vitamin Deficiency provides preliminary AI-based educational indications only. It cannot confirm a diagnosis or replace a clinical blood test.
           </div>
         </div>
       </Card>

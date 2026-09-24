@@ -5,6 +5,7 @@ public enum DeficiencyCategory {
     VITAMIN_A_DEFICIENCY("Vitamin_A_Deficiency", "Vitamin A Deficiency"),
     VITAMIN_B12_DEFICIENCY("Vitamin_B12_Deficiency", "Vitamin B12 Deficiency"),
     VITAMIN_C_DEFICIENCY("Vitamin_C_Deficiency", "Vitamin C Deficiency"),
+    VITAMIN_D_DEFICIENCY("Vitamin_D_Deficiency", "Vitamin D (education only)"),
     ZINC_DEFICIENCY("Zinc_Deficiency", "Zinc Deficiency"),
     HEALTHY_NORMAL("Healthy_Normal", "Healthy / Balanced Baseline");
 
@@ -43,6 +44,7 @@ public enum DeficiencyCategory {
         if (upper.contains("VITAMIN_A") || upper.contains("VITAMIN A")) return VITAMIN_A_DEFICIENCY;
         if (upper.contains("VITAMIN_C") || upper.contains("VITAMIN C") || upper.contains("SCURVY")) return VITAMIN_C_DEFICIENCY;
         if (upper.contains("ZINC")) return ZINC_DEFICIENCY;
+        if (upper.contains("VITAMIN_D") || upper.contains("VITAMIN D")) return VITAMIN_D_DEFICIENCY;
 
         return HEALTHY_NORMAL;
     }

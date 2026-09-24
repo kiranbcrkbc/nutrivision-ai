@@ -1,5 +1,5 @@
 // ==============================================================================
-// NutriVision AI - Core TypeScript Types
+// Vitamin Deficiency - Core TypeScript Types
 // ==============================================================================
 
 export type Role = 'ROLE_USER' | 'ROLE_ADMIN';
@@ -41,7 +41,8 @@ export interface PredictionItem {
 }
 
 export interface InferenceResponse {
-  status: 'SUCCESS' | 'QUALITY_REJECTED' | 'MODEL_NOT_AVAILABLE' | 'ERROR' | 'SERVICE_UNAVAILABLE';
+  reportedSymptoms?: string[];
+  status: 'SUCCESS' | 'QUALITY_REJECTED' | 'MODEL_NOT_AVAILABLE' | 'ERROR' | 'SERVICE_UNAVAILABLE' | 'SCREENING_UNAVAILABLE' | 'INVALID_BODY_PART';
   modelAvailable: boolean;
   modelStatus: string;
   inferenceStatus: string;
@@ -77,6 +78,7 @@ export interface AssessmentImage {
 }
 
 export interface Assessment {
+  screeningResult?: InferenceResponse;
   assessmentId: number;
   userId?: number;
   userFullName?: string;
@@ -196,4 +198,3 @@ export interface ToastMessage {
   message?: string;
   durationMs?: number;
 }
-

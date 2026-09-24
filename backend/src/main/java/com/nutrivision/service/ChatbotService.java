@@ -24,7 +24,7 @@ public class ChatbotService {
     private final UserRepository userRepository;
 
     private static final String DEFAULT_DISCLAIMER =
-            "NutriVision AI provides educational information and preliminary visual screening indications only. It is not a clinical medical diagnosis. Please consult a qualified healthcare provider for clinical evaluation.";
+            "Vitamin Deficiency provides educational information and preliminary visual screening indications only. It is not a clinical medical diagnosis. Please consult a qualified healthcare provider for clinical evaluation.";
 
     public ChatbotService(AssessmentRepository assessmentRepository, UserRepository userRepository) {
         this.assessmentRepository = assessmentRepository;
@@ -34,7 +34,7 @@ public class ChatbotService {
     @Transactional(readOnly = true)
     public ChatMessageResponse processUserMessage(String userEmail, ChatMessageRequest request) {
         String msg = (request.getMessage() != null) ? request.getMessage().trim().toLowerCase() : "";
-        log.info("Processing chat query for user {}: {}", userEmail, msg);
+        // Do not log private health questions or account identifiers.
 
         // Emergency detection
         if (isEmergencyQuery(msg)) {
@@ -45,6 +45,40 @@ public class ChatbotService {
                     "Immediate medical attention is required for acute symptoms.",
                     true
             );
+        }
+
+        // Diagnostic confirmation questions ("can this confirm", "is this real diagnosis")
+        if (msg.contains("confirm") || msg.contains("diagnosis") || Pattern.compile("\\bprove\\b").matcher(msg).find() || msg.contains("is this real") || msg.contains("test result")) {
+            return new ChatMessageResponse(
+                    "NO — Vitamin Deficiency cannot confirm a nutritional deficiency, and no smartphone photo can replace clinical laboratory testing.\n\n" +
+                            "Vitamin Deficiency provides preliminary visual indications to raise awareness about visible signs on the body. A definitive diagnosis requires standard clinical evaluation and laboratory blood tests (such as Serum B12, Serum Ferritin, or 25-OH Vitamin D) ordered by a physician.",
+                    "DIAGNOSTIC_LIMITATION",
+                    Arrays.asList("When should I see a doctor?", "Find a doctor in Bengaluru", "What foods contain B12?"),
+                    DEFAULT_DISCLAIMER,
+                    false
+            );
+        }
+
+        if (msg.contains("child") || msg.contains("children") || msg.contains("baby")) {
+            return new ChatMessageResponse("This prototype has not been validated for children. A parent or guardian should discuss a child's symptoms and nutrition with a paediatrician. Do not use photo results or adult supplement doses for a child.", "CHILD_SAFETY", List.of("Find a doctor in Bengaluru"), DEFAULT_DISCLAIMER, false);
+        }
+        if (msg.contains("vitamin d") || msg.contains("cholecalciferol")) {
+            String answer;
+            String intent;
+            if (msg.contains("symptom") || msg.contains("sign")) {
+                answer = "Vitamin D deficiency can cause bone pain and muscle weakness. These symptoms have other causes too. A photo cannot establish your vitamin D level; a clinician can decide whether a 25-hydroxyvitamin D blood test is appropriate.";
+                intent = "VITAMIN_D_SYMPTOMS";
+            } else if (msg.contains("food") || msg.contains("eat") || msg.contains("natural") || msg.contains("improve") || msg.contains("sun")) {
+                answer = "Vitamin D sources include oily fish, egg yolks, and foods fortified with vitamin D, such as some dairy or plant milks. Check the label. Sunlight helps your body make vitamin D, but UV exposure can harm skin; avoid tanning or a fixed sun-exposure prescription. Ask a clinician about testing and supplements if concerned.";
+                intent = "VITAMIN_D_FOODS";
+            } else {
+                answer = "Vitamin D helps your body absorb calcium and supports bones and muscles. Your level cannot be confirmed from a photograph. A clinician can assess your symptoms and decide whether blood testing is needed.";
+                intent = "VITAMIN_D_INFO";
+            }
+            return new ChatMessageResponse(answer + "\n\nSource: https://ods.od.nih.gov/factsheets/VitaminD-Consumer/", intent, List.of("Vitamin D food sources", "Vitamin D symptoms", "Find a doctor in Bengaluru"), DEFAULT_DISCLAIMER, false);
+        }
+        if (msg.contains("uploaded an image") || msg.contains("result mean")) {
+            return new ChatMessageResponse("A photo-quality result describes lighting and sharpness only. The current synthetic model is not validated for real photo screening, so it cannot tell whether you have a deficiency. Open your saved assessment to see its actual status; discuss ongoing symptoms with a clinician.", "IMAGE_RESULT_LIMITS", List.of("View Assessment History", "Find a doctor in Bengaluru"), DEFAULT_DISCLAIMER, false);
         }
 
         // Previous Assessment inquiry (IDOR protected: strictly queries user's own records)
@@ -102,7 +136,7 @@ public class ChatbotService {
                         "Here are excellent dietary sources of Iron for everyday meals:\n\n" +
                                 "• Vegetarian Sources: Spinach (Palak), methi leaves, lentils (dal), chickpeas (chole), rajma, pumpkin seeds, and poha with lemon.\n" +
                                 "• Non-Vegetarian Sources: Eggs, chicken, and fish.\n\n" +
-                                "💡 Pro-Tip for Absorption: Plant-based (non-heme) iron is absorbed up to 3 times better when paired with Vitamin C! Squeeze fresh lemon juice over your dal or eat an amla or orange with your meal.",
+                                "💡 Pro-Tip for Absorption: Plant-based (non-heme) iron is absorbed more effectively when paired with Vitamin C! Squeeze fresh lemon juice over your dal or eat an amla or orange with your meal.",
                         "IRON_FOODS",
                         Arrays.asList("Why do I have spoon nails?", "I am vegetarian", "Find a doctor in Bengaluru"),
                         DEFAULT_DISCLAIMER,
@@ -216,7 +250,7 @@ public class ChatbotService {
         // Dietary personalization: Vegetarian / Vegan
         if (msg.contains("vegetarian") || msg.contains("veg") || msg.contains("vegan") || msg.contains("plant based")) {
             return new ChatMessageResponse(
-                    "NutriVision AI supports personalized vegetarian and vegan nutritional guidance!\n\n" +
+                    "Vitamin Deficiency supports personalized vegetarian and vegan nutritional guidance!\n\n" +
                             "For Vegetarians:\n" +
                             "• Focus on curd/dahi and paneer for Vitamin B12.\n" +
                             "• Consume palak, lentils, methi, and pumpkin seeds with fresh lemon juice for enhanced iron absorption.\n\n" +
@@ -285,7 +319,7 @@ public class ChatbotService {
         if (msg.contains("supplement") || msg.contains("tablet") || msg.contains("pill") || msg.contains("capsule") || msg.contains("multivitamin") || msg.contains("dose") || msg.contains("dosage")) {
             return new ChatMessageResponse(
                     "Regarding vitamins and dietary supplements:\n\n" +
-                            "• Safety First: NutriVision AI does not recommend or prescribe specific supplement dosages or pharmaceutical medications. High-dose fat-soluble vitamins (such as Vitamin A or D) or high-dose iron can cause toxicity if taken without clinical monitoring.\n" +
+                            "• Safety First: Vitamin Deficiency does not recommend or prescribe specific supplement dosages or pharmaceutical medications. High-dose fat-soluble vitamins (such as Vitamin A or D) or high-dose iron can cause toxicity if taken without clinical monitoring.\n" +
                             "• Dietary First: We always recommend obtaining essential vitamins from wholesome, balanced everyday foods whenever possible.\n" +
                             "• Clinical Guidance: If a deficiency is confirmed by a blood test, your doctor or registered dietitian will prescribe the exact safe dosage and formulation suited to your health profile.",
                     "SUPPLEMENT_SAFETY",
@@ -298,7 +332,7 @@ public class ChatbotService {
         // Confidence and Image Result questions
         if (msg.contains("confidence") || msg.contains("accuracy") || msg.contains("how accurate") || msg.contains("what does confidence mean")) {
             return new ChatMessageResponse(
-                    "In NutriVision AI, 'Confidence' reflects how strongly the visual pattern in your photo matches pattern categories in our validated training dataset:\n\n" +
+                    "In Vitamin Deficiency, 'Confidence' reflects how strongly the visual pattern in your photo matches categories in the training dataset. The bundled model was tested only on synthetic drawings, so its scores do not establish real-world accuracy:\n\n" +
                             "• High: The visual markers in your image strongly align with typical patterns for that category.\n" +
                             "• Moderate: Notable visual features were recognized, but they may be mild or overlap with other normal variations.\n" +
                             "• Low / Not Clear: The photo is not distinct enough to offer a reliable indication.\n\n" +
@@ -310,17 +344,7 @@ public class ChatbotService {
             );
         }
 
-        // Diagnostic confirmation questions ("can this confirm", "is this real diagnosis")
-        if (msg.contains("confirm") || msg.contains("diagnosis") || msg.contains("prove") || msg.contains("is this real") || msg.contains("test result")) {
-            return new ChatMessageResponse(
-                    "NO — NutriVision AI cannot confirm a nutritional deficiency, and no smartphone photo can replace clinical laboratory testing.\n\n" +
-                            "NutriVision AI provides preliminary visual indications to raise awareness about visible signs on the body. A definitive diagnosis requires standard clinical evaluation and laboratory blood tests (such as Serum B12, Serum Ferritin, or 25-OH Vitamin D) ordered by a physician.",
-                    "DIAGNOSTIC_LIMITATION",
-                    Arrays.asList("When should I see a doctor?", "Find a doctor in Bengaluru", "What foods contain B12?"),
-                    DEFAULT_DISCLAIMER,
-                    false
-            );
-        }
+
 
         // General Nutrition / "What should I eat" / Nutrition Plan
         if (msg.contains("meal plan") || msg.contains("diet plan") || msg.contains("what should i eat") || msg.contains("balanced diet") || msg.contains("nutrition plan")) {
@@ -341,7 +365,7 @@ public class ChatbotService {
         // General greeting or fallback
         if (msg.contains("hello") || msg.contains("hi") || msg.contains("hey") || msg.contains("good morning") || msg.contains("good evening")) {
             return new ChatMessageResponse(
-                    "Hello! I am your NutriVision AI Assistant. I can help explain vitamin functions, decode visible symptoms (like sore tongue or spoon nails) into plain English, suggest Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nHow can I help you today?",
+                    "Hello! I am your Vitamin Deficiency Assistant. I can help explain vitamin functions, decode visible symptoms (like sore tongue or spoon nails) into plain English, suggest Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nHow can I help you today?",
                     "GREETING",
                     Arrays.asList("What did my previous assessment show?", "What is Vitamin B12?", "Foods that contain iron", "Find a doctor in Bengaluru"),
                     DEFAULT_DISCLAIMER,
@@ -352,7 +376,7 @@ public class ChatbotService {
         // Default intelligent contextual response
         return new ChatMessageResponse(
                 "I understand you are asking about \"" + request.getMessage() + "\".\n\n" +
-                        "NutriVision AI specializes in educational guidance on preliminary visual signs of nutritional deficiencies (such as Iron, Vitamin B12, Vitamin C, Vitamin A, and Zinc), culinary food recommendations, and healthcare referrals.\n\n" +
+                        "Vitamin Deficiency specializes in educational guidance on preliminary visual signs of nutritional deficiencies (such as Iron, Vitamin B12, Vitamin C, Vitamin A, and Zinc), culinary food recommendations, and healthcare referrals.\n\n" +
                         "Would you like to know about:\n" +
                         "1. How specific vitamins function and their food sources\n" +
                         "2. Explaining a visible sign (e.g., sore tongue, spoon nails, cracked lip corners)\n" +

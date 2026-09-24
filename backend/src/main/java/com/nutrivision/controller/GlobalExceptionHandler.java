@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected server error occurred. Please try again later.",
-                List.of(ex.getClass().getSimpleName() + ": " + ex.getMessage())
+                List.of("Please contact support if this problem continues.")
         );
         return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }

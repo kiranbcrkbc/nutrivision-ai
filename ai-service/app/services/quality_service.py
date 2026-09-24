@@ -1,5 +1,5 @@
 """
-NutriVision AI - Image Quality Evaluation Service
+Vitamin Deficiency - Image Quality Evaluation Service
 Provides technical image quality analysis (sharpness via Laplacian variance, luminance via mean grayscale intensity).
 DOES NOT perform medical diagnosis - strictly technical quality assurance.
 """
@@ -7,7 +7,7 @@ DOES NOT perform medical diagnosis - strictly technical quality assurance.
 import io
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 from app.core.config import settings
 from app.schemas.quality import ImageQualityResponse
 
@@ -32,32 +32,28 @@ def evaluate_image_quality(image_bytes: bytes) -> ImageQualityResponse:
             rejectionReason="Empty or invalid image data provided."
         )
 
-    # 1. Decode image via OpenCV
-    np_arr = np.frombuffer(image_bytes, np.uint8)
-    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-
-    # Fallback to PIL if OpenCV direct decode fails on specific formats
-    if img is None:
-        try:
-            pil_img = Image.open(io.BytesIO(image_bytes))
-            if pil_img.mode != "RGB":
-                pil_img = pil_img.convert("RGB")
-            img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
-        except Exception:
-            return ImageQualityResponse(
-                qualityStatus="REJECTED",
-                blurScore=None,
-                brightnessScore=None,
-                rejectionReason="Invalid or corrupted image format. Unable to decode."
-            )
-
-    if img is None or img.size == 0:
-        return ImageQualityResponse(
-            qualityStatus="REJECTED",
-            blurScore=None,
-            brightnessScore=None,
-            rejectionReason="Invalid or corrupted image format. Unable to decode."
-        )
+    # Inspect headers before allocation; restrict format, dimensions and frames.
+    try:
+        if len(image_bytes) > 10 * 1024 * 1024:
+            raise ValueError("Please upload an image smaller than 10 MB.")
+        with Image.open(io.BytesIO(image_bytes)) as source:
+            if source.format not in {"JPEG", "PNG", "WEBP"}:
+                raise ValueError("Please upload a JPG, PNG, or WebP photograph.")
+            if min(source.size) < 224:
+                raise ValueError("Photo is too small. Use at least 224 pixels on each side.")
+            if source.width * source.height > 20_000_000:
+                raise ValueError("Photo is too large. Use an image under 20 megapixels.")
+            if getattr(source, "n_frames", 1) != 1:
+                raise ValueError("Animated images are not supported. Upload one photograph.")
+            source.verify()
+        with Image.open(io.BytesIO(image_bytes)) as source:
+            decoded = ImageOps.exif_transpose(source).convert("RGB")
+            decoded.thumbnail((1600, 1600))
+            img = cv2.cvtColor(np.asarray(decoded), cv2.COLOR_RGB2BGR)
+    except ValueError as exc:
+        return ImageQualityResponse(qualityStatus="REJECTED", rejectionReason=str(exc))
+    except Exception:
+        return ImageQualityResponse(qualityStatus="REJECTED", rejectionReason="Invalid or corrupted image. Please upload another photograph.")
 
     # 2. Convert to grayscale for OpenCV operations
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

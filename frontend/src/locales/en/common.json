@@ -1,5 +1,5 @@
 {
-  "brand": "NutriVision AI",
+  "brand": "Vitamin Deficiency",
   "tagline": "AI-Based Preliminary Vitamin Deficiency & Nutrition System",
   "nav": {
     "home": "Home",
@@ -21,7 +21,7 @@
   },
   "disclaimer": {
     "title": "Medical Safety Notice",
-    "bannerText": "Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment."
+    "bannerText": "Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment."
   },
   "hero": {
     "badge": "AI-Assisted Preliminary Nutrition Screening",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts
@@ -9,37 +9,38 @@ import { RoleProtectedRoute } from './components/layout/RoleProtectedRoute';
 import { ToastContainer } from './components/common/ToastContainer';
 
 // Public Pages
-import { LandingPage } from './pages/LandingPage';
-import { HowItWorksPage } from './pages/HowItWorksPage';
-import { AboutPage } from './pages/AboutPage';
-import { DisclaimerPage } from './pages/DisclaimerPage';
-import { AccessDeniedPage } from './pages/AccessDeniedPage';
-import { DemoModePage } from './pages/DemoModePage';
+const LandingPage = lazy(() => import('./pages/LandingPage').then(module => ({ default: module.LandingPage })));
+const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage').then(module => ({ default: module.HowItWorksPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
+const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage').then(module => ({ default: module.DisclaimerPage })));
+const AccessDeniedPage = lazy(() => import('./pages/AccessDeniedPage').then(module => ({ default: module.AccessDeniedPage })));
+const DemoModePage = lazy(() => import('./pages/DemoModePage').then(module => ({ default: module.DemoModePage })));
 
 // Auth Pages
-import { LoginPage } from './pages/auth/LoginPage';
-import { RegisterPage } from './pages/auth/RegisterPage';
-import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(module => ({ default: module.LoginPage })));
+const RegisterPage = lazy(() => import('./pages/auth/RegisterPage').then(module => ({ default: module.RegisterPage })));
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
 
 // Authenticated Dashboard Pages
-import { DashboardPage } from './pages/dashboard/DashboardPage';
-import { NewAssessmentPage } from './pages/assessment/NewAssessmentPage';
-import { AssessmentDetailPage } from './pages/assessment/AssessmentDetailPage';
-import { HistoryPage } from './pages/dashboard/HistoryPage';
-import { ProgressPage } from './pages/dashboard/ProgressPage';
-import { RecommendationsPage } from './pages/dashboard/RecommendationsPage';
-import { NutritionPlanPage } from './pages/dashboard/NutritionPlanPage';
-import { ReportsPage } from './pages/dashboard/ReportsPage';
-import { ChatbotPage } from './pages/dashboard/ChatbotPage';
-import { FindDoctorPage } from './pages/referrals/FindDoctorPage';
-import { ProfilePage } from './pages/dashboard/ProfilePage';
-import { SettingsPage } from './pages/dashboard/SettingsPage';
-import { DevStatusPage } from './pages/dashboard/DevStatusPage';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage').then(module => ({ default: module.DashboardPage })));
+const NewAssessmentPage = lazy(() => import('./pages/assessment/NewAssessmentPage').then(module => ({ default: module.NewAssessmentPage })));
+const AssessmentDetailPage = lazy(() => import('./pages/assessment/AssessmentDetailPage').then(module => ({ default: module.AssessmentDetailPage })));
+const HistoryPage = lazy(() => import('./pages/dashboard/HistoryPage').then(module => ({ default: module.HistoryPage })));
+const ProgressPage = lazy(() => import('./pages/dashboard/ProgressPage').then(module => ({ default: module.ProgressPage })));
+const RecommendationsPage = lazy(() => import('./pages/dashboard/RecommendationsPage').then(module => ({ default: module.RecommendationsPage })));
+const NutritionPlanPage = lazy(() => import('./pages/dashboard/NutritionPlanPage').then(module => ({ default: module.NutritionPlanPage })));
+const ReportsPage = lazy(() => import('./pages/dashboard/ReportsPage').then(module => ({ default: module.ReportsPage })));
+const ChatbotPage = lazy(() => import('./pages/dashboard/ChatbotPage').then(module => ({ default: module.ChatbotPage })));
+const FindDoctorPage = lazy(() => import('./pages/referrals/FindDoctorPage').then(module => ({ default: module.FindDoctorPage })));
+const ProfilePage = lazy(() => import('./pages/dashboard/ProfilePage').then(module => ({ default: module.ProfilePage })));
+const SettingsPage = lazy(() => import('./pages/dashboard/SettingsPage').then(module => ({ default: module.SettingsPage })));
+const DevStatusPage = lazy(() => import('./pages/dashboard/DevStatusPage').then(module => ({ default: module.DevStatusPage })));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(module => ({ default: module.AdminDashboardPage })));
 
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
+      <Suspense fallback={<div role="status" className="p-8 text-center">Loading page...</div>}>
       <Routes>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
@@ -101,6 +102,7 @@ export const App: React.FC = () => {
         {/* Catch-all Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
 
       {/* Global Toast Notifications */}
       <ToastContainer />

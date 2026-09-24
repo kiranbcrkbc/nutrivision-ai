@@ -36,53 +36,53 @@
     "test_accuracy": 0.9928,
     "classification_report": {
       "Healthy_Normal": {
-        "precision": 1.0,
+        "precision": 1,
         "recall": 0.9565217391304348,
         "f1-score": 0.9777777777777777,
-        "support": 23.0
+        "support": 23
       },
       "Iron_Deficiency": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
-        "support": 23.0
+        "precision": 1,
+        "recall": 1,
+        "f1-score": 1,
+        "support": 23
       },
       "Vitamin_A_Deficiency": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
-        "support": 23.0
+        "precision": 1,
+        "recall": 1,
+        "f1-score": 1,
+        "support": 23
       },
       "Vitamin_B12_Deficiency": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
-        "support": 23.0
+        "precision": 1,
+        "recall": 1,
+        "f1-score": 1,
+        "support": 23
       },
       "Vitamin_C_Deficiency": {
         "precision": 0.9583333333333334,
-        "recall": 1.0,
+        "recall": 1,
         "f1-score": 0.9787234042553191,
-        "support": 23.0
+        "support": 23
       },
       "Zinc_Deficiency": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
-        "support": 23.0
+        "precision": 1,
+        "recall": 1,
+        "f1-score": 1,
+        "support": 23
       },
       "accuracy": 0.9927536231884058,
       "macro avg": {
         "precision": 0.9930555555555555,
         "recall": 0.9927536231884058,
         "f1-score": 0.9927501970055163,
-        "support": 138.0
+        "support": 138
       },
       "weighted avg": {
         "precision": 0.9930555555555557,
         "recall": 0.9927536231884058,
         "f1-score": 0.992750197005516,
-        "support": 138.0
+        "support": 138
       }
     },
     "confusion_matrix": [
@@ -188,5 +188,8 @@
     ]
   },
   "trained_date": "2026-09-03T16:01:17Z",
-  "medical_disclaimer": "NutriVision AI provides AI-based preliminary screening indicators only. This is not a medical diagnosis."
+  "medical_disclaimer": "Synthetic demonstration benchmark only. Not validated for real photographs or diagnosis.",
+  "validation_scope": "synthetic_drawings_only",
+  "patient_photo_validation": false,
+  "anatomy_validation": false
 }

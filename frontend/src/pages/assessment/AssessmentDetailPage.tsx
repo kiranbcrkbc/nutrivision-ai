@@ -62,6 +62,7 @@ export const AssessmentDetailPage: React.FC = () => {
       try {
         const data = await assessmentService.getAssessmentById(id);
         setAssessment(data);
+        setInferenceResult(data.screeningResult || null);
         const imgList = await assessmentService.getAssessmentImages(id);
         setImages(imgList);
       } catch (err: any) {
@@ -78,16 +79,8 @@ export const AssessmentDetailPage: React.FC = () => {
   // Fetch nutrition guidance when top prediction is established
   useEffect(() => {
     const fetchNutrition = async () => {
-      let category = 'Healthy_Normal';
-      if (inferenceResult?.topPrediction?.deficiencyCategory) {
-        category = inferenceResult.topPrediction.deficiencyCategory;
-      } else if (assessment?.status === 'COMPLETED' && images.length > 0) {
-        // Default category fallback
-        category = 'Iron_Deficiency';
-      } else {
-        return;
-      }
-
+      const category = inferenceResult?.status === 'SUCCESS' ? inferenceResult.topPrediction?.categoryCode : undefined;
+      if (!category) { setNutritionData(null); return; }
       setIsNutritionLoading(true);
       try {
         const res = await nutritionService.getRecommendations(
@@ -112,6 +105,7 @@ export const AssessmentDetailPage: React.FC = () => {
     try {
       const res = await assessmentService.screenAssessment(id, imageId);
       setInferenceResult(res);
+      setAssessment(await assessmentService.getAssessmentById(id));
       if (res.status === 'SUCCESS') {
         showToast.success('Screening Complete', 'AI inference and image quality checks completed successfully.');
       } else if (res.status === 'QUALITY_REJECTED') {
@@ -197,9 +191,9 @@ export const AssessmentDetailPage: React.FC = () => {
                 onClick={() => setIsReportOpen(true)}
                 leftIcon={<FileText className="w-4 h-4 text-health-600" />}
               >
-                View / Print Official Report
+                View / Print Record
               </Button>
-              <Link to={`/recommendations?category=${inferenceResult?.topPrediction?.deficiencyCategory || 'Iron_Deficiency'}`}>
+              <Link to={`/recommendations?category=${inferenceResult?.topPrediction?.categoryCode || 'Healthy_Normal'}`}>
                 <Button variant="primary" size="sm" leftIcon={<Utensils className="w-4 h-4" />}>
                   Explore Food Engine
                 </Button>

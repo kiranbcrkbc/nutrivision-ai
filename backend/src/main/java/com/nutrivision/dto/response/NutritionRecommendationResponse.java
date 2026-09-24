@@ -24,7 +24,7 @@ public class NutritionRecommendationResponse {
     private String educationalDisclaimer;
 
     public NutritionRecommendationResponse() {
-        this.educationalDisclaimer = "NutriVision AI dietary recommendations provide educational nutritional guidance based on nutrient categories associated with preliminary AI screening. This does not constitute a clinical prescription or medical diagnosis. Please consult a registered dietitian or physician for personalized medical nutrition therapy.";
+        this.educationalDisclaimer = "Vitamin Deficiency dietary recommendations provide educational nutritional guidance based on nutrient categories associated with preliminary AI screening. This does not constitute a clinical prescription or medical diagnosis. Please consult a registered dietitian or physician for personalized medical nutrition therapy.";
     }
 
     public String getScreeningCategory() {

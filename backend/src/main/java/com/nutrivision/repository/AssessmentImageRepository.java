@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface AssessmentImageRepository extends JpaRepository<AssessmentImage, Long> {
     List<AssessmentImage> findByAssessment_AssessmentId(Long assessmentId);
+    long countByAssessment_User_UserId(Long userId);
+    long countByAssessment_User_UserIdAndQualityStatus(Long userId, QualityStatus qualityStatus);
     long countByQualityStatus(QualityStatus qualityStatus);
 
     @Query("SELECT i.qualityStatus, COUNT(i) FROM AssessmentImage i GROUP BY i.qualityStatus")

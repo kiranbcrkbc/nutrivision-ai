@@ -21,7 +21,7 @@ public class ChatbotController {
     }
 
     /**
-     * Context-aware conversational endpoint for NutriVision AI Assistant.
+     * Context-aware conversational endpoint for Vitamin Deficiency Assistant.
      */
     @PostMapping("/message")
     public ResponseEntity<ApiResponse<ChatMessageResponse>> sendMessage(

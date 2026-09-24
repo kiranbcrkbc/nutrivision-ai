@@ -31,12 +31,12 @@ public class HealthController {
     @GetMapping
     public ResponseEntity<ApiResponse<Map<String, Object>>> getServiceHealth() {
         Map<String, Object> status = new HashMap<>();
-        status.put("service", "NutriVision AI Backend API Gateway");
+        status.put("service", "Vitamin Deficiency Backend API Gateway");
         status.put("status", "UP");
         status.put("version", "1.0.0");
         status.put("timestamp", Instant.now().toString());
 
-        return ResponseEntity.ok(ApiResponse.success(status, "NutriVision API Service is healthy and operational"));
+        return ResponseEntity.ok(ApiResponse.success(status, "Vitamin Deficiency API Service is healthy and operational"));
     }
 
     @GetMapping("/database")
@@ -57,7 +57,7 @@ public class HealthController {
             return ResponseEntity.ok(ApiResponse.success(dbStatus, "Database connection verified successfully"));
         } catch (Exception ex) {
             dbStatus.put("database", "DOWN");
-            dbStatus.put("error", ex.getMessage());
+            dbStatus.put("error", "Database connection unavailable");
             return ResponseEntity.ok(ApiResponse.success(dbStatus, "Database is unreachable or credentials invalid"));
         }
     }

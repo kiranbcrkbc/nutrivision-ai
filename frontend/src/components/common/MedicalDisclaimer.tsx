@@ -15,7 +15,7 @@ export const MedicalDisclaimer: React.FC<MedicalDisclaimerProps> = ({
 
   const disclaimerText = t(
     'disclaimer.bannerText',
-    'Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment.'
+    'Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment.'
   );
 
   if (variant === 'compact') {
