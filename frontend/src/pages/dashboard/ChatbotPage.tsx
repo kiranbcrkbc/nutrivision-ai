@@ -50,7 +50,8 @@ export const ChatbotPage: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const panel = messagesEndRef.current?.parentElement;
+    panel?.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -130,6 +131,7 @@ export const ChatbotPage: React.FC = () => {
           variant="ghost"
           size="sm"
           onClick={handleClearChat}
+          disabled={isTyping}
           leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
           className="text-xs text-slate-500"
         >
