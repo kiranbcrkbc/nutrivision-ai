@@ -37,5 +37,5 @@ app:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:https://kiranbcrkbc-nutrivision-ai.onrender.com}
   ai-service:
     url: ${AI_SERVICE_BASE_URL:https://kiranbcrkbc-nutrivision-ai-service.onrender.com}
-    timeout-ms: ${AI_SERVICE_TIMEOUT_MS:25000}
-
+    # Free-host wake-up can exceed 50 seconds. Browser image requests allow 120s.
+    timeout-ms: ${AI_SERVICE_TIMEOUT_MS:90000}

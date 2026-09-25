@@ -31,7 +31,7 @@ public class AiInferenceClient {
         this.aiServiceBaseUrl = normalizeUrl(aiServiceBaseUrl);
 
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(timeoutMs);
+        factory.setConnectTimeout(Math.min(timeoutMs, 10000));
         factory.setReadTimeout(timeoutMs);
         this.restTemplate = new RestTemplate(factory);
 

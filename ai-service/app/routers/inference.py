@@ -7,6 +7,7 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException, status
 from typing import Optional
 from app.schemas.inference import InferenceResponse
 from app.services.inference_service import run_screening_inference
+from app.services.photo_processing import process_photo
 
 router = APIRouter(tags=["AI Screening & Inference Engine"])
 
@@ -37,7 +38,7 @@ async def analyze_deficiency_screening(
                 detail="Empty image data provided."
             )
 
-        return run_screening_inference(image_bytes, target_body_part)
+        return await process_photo(run_screening_inference, image_bytes, target_body_part)
 
     except HTTPException:
         raise
