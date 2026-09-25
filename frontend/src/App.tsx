@@ -10,6 +10,7 @@ import { ToastContainer } from './components/common/ToastContainer';
 
 // Public Pages
 const LandingPage = lazy(() => import('./pages/LandingPage').then(module => ({ default: module.LandingPage })));
+const DesignVariantsPage = lazy(() => import('./pages/LandingPage').then(module => ({ default: module.DesignVariantsPage })));
 const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage').then(module => ({ default: module.HowItWorksPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
 const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage').then(module => ({ default: module.DisclaimerPage })));
@@ -45,6 +46,7 @@ export const App: React.FC = () => {
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/designs" element={<DesignVariantsPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />

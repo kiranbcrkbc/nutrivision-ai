@@ -29,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: 'bg-health-600 hover:bg-health-700 text-white shadow-sm hover:shadow-health-glow focus:ring-health-500 dark:bg-health-600 dark:hover:bg-health-500',
+    primary: 'bg-health-700 hover:bg-health-800 text-white focus:ring-health-500 dark:bg-health-700 dark:hover:bg-health-600',
     secondary: 'bg-slate-100 hover:bg-slate-200 text-slate-800 focus:ring-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200',
     outline: 'border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-200 focus:ring-health-500',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white focus:ring-rose-500 shadow-sm',

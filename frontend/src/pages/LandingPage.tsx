@@ -1,26 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Camera, BookOpen, MapPin, ShieldCheck, Leaf, History } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowUpRight, ArrowRight, Camera, BookOpen, History, Leaf, Check } from 'lucide-react';
 
-export const LandingPage: React.FC = () => <div className="bg-[#f7faf8] dark:bg-slate-950">
-  <section className="max-w-6xl mx-auto px-6 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 items-center">
-    <div className="space-y-7">
-      <p className="text-xs font-bold tracking-[0.2em] uppercase text-health-700 dark:text-health-400">Understand nutrition. Make informed choices.</p>
-      <h1 className="text-4xl sm:text-6xl font-bold tracking-tight leading-[1.08] text-slate-900 dark:text-white">A clearer picture of your<br /><span className="text-health-700 dark:text-health-400">nutritional wellbeing.</span></h1>
-      <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-lg">Keep a record of your concerns, learn about vitamins and everyday foods, and find the right care when you need it.</p>
-      <div className="flex flex-wrap gap-3"><Link to="/assessment/new" className="inline-flex items-center gap-3 px-6 py-3.5 rounded-xl bg-health-700 text-white font-semibold shadow-sm">Start an assessment <ArrowRight className="w-4 h-4" /></Link><Link to="/how-it-works" className="px-6 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 font-semibold">How it works</Link></div>
-      <p className="flex gap-2 text-sm text-slate-500"><ShieldCheck className="w-5 h-5 flex-shrink-0" />Educational support, with clear limits. Not a medical diagnosis.</p>
-    </div>
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-7 sm:p-10 shadow-xl shadow-slate-200/40 dark:shadow-none space-y-7">
-      <div className="flex items-center gap-3"><div className="p-3 bg-health-50 dark:bg-health-950 rounded-2xl"><Leaf className="w-7 h-7 text-health-700" /></div><div><h2 className="font-bold text-xl">Small steps, better understanding</h2><p className="text-sm text-slate-500">Your personal nutrition companion</p></div></div>
-      {[['01','Record your concern','Choose a body area and upload a clear close-up photo.'],['02','Check your photo','Get feedback on photo clarity and body-area suitability.'],['03','Take the next step','Explore food guidance, save your history, or find a clinician.']].map(([number,title,body]) => <div key={number} className="flex gap-4"><span className="text-health-600 font-bold text-sm pt-1">{number}</span><div><h3 className="font-semibold">{title}</h3><p className="text-sm text-slate-500 mt-1 leading-relaxed">{body}</p></div></div>)}
-      <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-amber-900 dark:text-amber-200"><strong>Know what a photo can tell you.</strong> Photo checks help you create a useful record. Vitamin deficiencies require professional assessment and, when appropriate, laboratory tests.</div>
-    </div>
-  </section>
-  <section className="max-w-6xl mx-auto px-6 pb-20"><div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{[
-    {icon:Camera,title:'Smarter photo uploads',text:'Check clarity and body-area suitability before saving.',href:'/assessment/new'},
-    {icon:BookOpen,title:'Food & vitamin guidance',text:'Explore everyday food sources and nutrition information.',href:'/recommendations'},
-    {icon:History,title:'Your saved history',text:'Review your own assessments and recorded outcomes.',href:'/history'},
-    {icon:MapPin,title:'Find professional care',text:'Search Bengaluru for a physician or dietitian.',href:'/doctors'},
-  ].map(({icon:Icon,title,text,href}) => <Link key={title} to={href} className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-health-500 transition-colors"><Icon className="w-6 h-6 text-health-600 mb-4" /><h2 className="font-semibold mb-2">{title}</h2><p className="text-sm text-slate-500 leading-relaxed">{text}</p></Link>)}</div></section>
-</div>;
+export const designDirections = [
+  { id: 'sage', name: 'Sage Journal', description: 'Warm ivory, botanical forms and editorial serif typography.', label: 'Calm & considered' },
+  { id: 'blue', name: 'Blue Studio', description: 'Crisp blue, a centred composition and modern sans-serif typography.', label: 'Clear & structured' },
+  { id: 'clay', name: 'Warm Terracotta', description: 'Earthy tones, an asymmetric layout and a warm magazine feel.', label: 'Warm & personal' },
+];
+export const BotanicalArt = () => <svg viewBox="0 0 400 360" fill="none" aria-hidden="true" className="botanical-art"><ellipse cx="200" cy="322" rx="113" ry="12" fill="currentColor" opacity=".08"/><path d="M192 300C192 234 211 171 251 80M192 259C159 217 138 186 119 141M204 204C247 181 280 147 296 113" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/><path d="M217 156C184 122 197 71 260 42C273 95 256 137 217 156Z" fill="currentColor" opacity=".78"/><path d="M186 239C124 245 80 203 89 147C147 149 181 182 186 239Z" fill="currentColor" opacity=".5"/><path d="M206 202C219 146 263 126 319 137C300 191 261 214 206 202Z" fill="currentColor" opacity=".9"/><path d="M242 108L218 155M118 178L178 229M229 188L292 154" stroke="var(--design-paper)" strokeWidth="1.4" opacity=".8"/><circle cx="111" cy="86" r="21" stroke="currentColor" opacity=".2"/><circle cx="309" cy="249" r="7" fill="currentColor" opacity=".2"/></svg>;
+
+export const LandingPage: React.FC = () => {
+  const [search] = useSearchParams();
+  const variant = designDirections.find(d => d.id === search.get('design'))?.id || 'sage';
+  return <div className={`wellness-home direction-${variant}`}>
+    {search.has('design') && <div className="design-preview-bar"><Link to="/designs">← All design variants</Link><span>{designDirections.find(d => d.id === variant)?.name} · Preview</span></div>}
+    <section className="wellness-hero"><div className="hero-copy"><p className="eyebrow"><span/> YOUR EVERYDAY WELLBEING, CONSIDERED.</p><h1>A little clarity.<br/>A healthier <em>perspective.</em></h1><p className="hero-description">A calm space to record your concerns, understand everyday nutrition, and take your next step with confidence.</p><div className="hero-actions"><Link to="/assessment/new" className="wellness-button">Start your photo check <ArrowUpRight size={19}/></Link><Link to="/how-it-works" className="wellness-text-link">Explore how it works <ArrowRight size={17}/></Link></div><p className="hero-note">Photo & symptom records. Nutrition education.<br/>Support for your wellbeing — not a medical diagnosis.</p></div>
+    <div className="hero-visual"><div className="visual-caption"><Leaf size={17}/><span>Small steps. Thoughtful care.</span><span className="visual-edition">01 / WELLBEING</span></div><BotanicalArt/><div className="journal-card"><span className="journal-icon"><Camera size={21}/></span><div><strong>Begin with a clearer picture</strong><p>One photo. Your own observations.</p></div><ArrowUpRight size={18}/></div><div className="visual-footnote"><span>GROW YOUR UNDERSTANDING</span><span>At your own pace</span></div></div></section>
+    <section className="wellness-path" aria-label="Your next steps"><div className="path-intro"><p className="eyebrow">A SIMPLE PLACE TO START</p><h2>More understanding.<br/><em>Less overwhelm.</em></h2></div>{[
+      {n:'01',icon:Camera,title:'Check your photo',text:'Upload a close-up and check that it is clear and shows the right body area.',link:'/assessment/new'},
+      {n:'02',icon:BookOpen,title:'Explore nutrition',text:'Get to know vitamins and food sources that fit your dietary preferences.',link:'/recommendations'},
+      {n:'03',icon:History,title:'Keep your story',text:'Save your observations and bring a useful record to your next consultation.',link:'/history'},
+    ].map(({n,icon:Icon,title,text,link})=><Link key={n} to={link} className="path-item"><div className="path-top"><Icon size={22}/><span>{n}</span></div><h3>{title}</h3><p>{text}</p><ArrowUpRight size={19} className="path-arrow"/></Link>)}</section>
+    <section className="care-note"><div><p className="eyebrow">CLEAR ABOUT WHAT WE CAN DO</p><h2>A useful record.<br/>An informed conversation.</h2></div><div><p>Photos can help you document a concern. They cannot establish your vitamin levels. This platform checks photo suitability and helps you organise your observations.</p><p className="care-check"><Check size={18}/> For diagnosis and testing, speak with a qualified clinician.</p><Link to="/doctors" className="wellness-text-link">Find professional care <ArrowUpRight size={17}/></Link></div></section>
+  </div>;
+};
+
+export const DesignVariantsPage = () => <div className="design-gallery"><p className="eyebrow">THREE DIRECTIONS. ONE PURPOSE.</p><h1>A calmer way forward.</h1><p className="gallery-description">Explore three visual directions for Vitamin Deficiency. Sage Journal is the selected design for the main platform.</p><div className="design-options">{designDirections.map((design,i)=><Link key={design.id} to={`/?design=${design.id}`} className={`design-option direction-${design.id}`}><div className="design-sample"><span>0{i+1} / {design.label}</span><h2>{design.name}</h2><BotanicalArt/></div><div className="design-option-details"><h3>{design.name}{i===0&&<small>Selected</small>}</h3><p>{design.description}</p><span>Explore this direction <ArrowUpRight size={18}/></span></div></Link>)}</div><Link className="wellness-text-link" to="/">Back to the main website <ArrowRight size={18}/></Link></div>;
