@@ -157,7 +157,7 @@ export const NewAssessmentPage: React.FC = () => {
       setUploadedImage(imageResult);
 
       if (imageResult.qualityStatus === 'PASSED') {
-        showToast.success('Quality Passed', `Sharpness and lighting verified (Blur: ${imageResult.blurScore}, Brightness: ${imageResult.brightnessScore}).`);
+        showToast.success('Photo checked', 'Your photo passed the image suitability checks.');
       } else if (imageResult.qualityStatus === 'REJECTED') {
         showToast.warning('Quality Issue Detected', imageResult.rejectionReason || 'Photograph does not meet quality requirements.');
       } else {
@@ -215,9 +215,11 @@ export const NewAssessmentPage: React.FC = () => {
       const updated = await assessmentService.reAnalyzeImageQuality(assessment.assessmentId, uploadedImage.imageId);
       setUploadedImage(updated);
       if (updated.qualityStatus === 'PASSED') {
-        showToast.success('Quality Check Passed', `Blur: ${updated.blurScore}, Brightness: ${updated.brightnessScore}`);
+        showToast.success('Photo checked', 'Your photo passed the suitability checks.');
       } else if (updated.qualityStatus === 'REJECTED') {
         showToast.warning('Quality Rejected', updated.rejectionReason || 'Quality check failed.');
+      } else if (updated.qualityStatus === 'WARNING') {
+        showToast.info('Photo checked', updated.rejectionReason || 'A clearer photo is recommended.');
       } else {
         showToast.info('Quality Pending', 'Service still unavailable.');
       }
@@ -264,19 +266,19 @@ export const NewAssessmentPage: React.FC = () => {
       {/* Wizard Progress Bar */}
       <div>
         <PageHeader
-          title="Nutritional Assessment Wizard"
+          title="Your photo assessment"
           subtitle={`Step ${currentStep} of 6: ${
             currentStep === 1
-              ? 'Anatomy Selection'
+              ? 'Choose a body area'
               : currentStep === 2
               ? 'Photo Upload & Capture'
               : currentStep === 3
-              ? 'Photo quality check'
+              ? 'Check your photo'
               : currentStep === 4
               ? 'Symptom Questionnaire'
               : currentStep === 5
               ? 'Review & Consent'
-              : 'Preliminary Results'
+              : 'Your saved record'
           }`}
         />
 
@@ -345,7 +347,7 @@ export const NewAssessmentPage: React.FC = () => {
               onClick={handleStartSession}
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              Begin Assessment Session
+              Continue
             </Button>
           </div>
         </div>
@@ -356,7 +358,7 @@ export const NewAssessmentPage: React.FC = () => {
         <Card variant="default" className="p-8 space-y-6 animate-fadeIn">
           <div className="text-center space-y-2">
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-              Provide Photograph of Your {selectedBodyPart}
+              Upload a photo of your {selectedBodyPart?.toLowerCase()}
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
               Please provide a clear, well-lit photograph. You can choose to take a photo using your camera or upload a file.
@@ -403,10 +405,10 @@ export const NewAssessmentPage: React.FC = () => {
                     )}
                   </div>
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                    {isUploading ? 'Uploading & evaluating image...' : 'Click to browse photograph or drag & drop here'}
+                    {isUploading ? 'Uploading & evaluating image...' : 'Choose a photo or drag it here'}
                   </span>
                   <span className="text-xs text-slate-400">
-                    JPEG, PNG, or WebP up to 10 MB (Stored securely for Assessment #{assessment?.assessmentId})
+                    JPG, PNG or WebP · Up to 10 MB
                   </span>
                 </label>
               </div>
@@ -422,7 +424,7 @@ export const NewAssessmentPage: React.FC = () => {
                   onClick={() => setShowCameraModal(true)}
                   leftIcon={<Camera className="w-4 h-4 text-health-600" />}
                 >
-                  Use Live Camera
+                  Take a photo
                 </Button>
               </div>
             </div>
@@ -440,7 +442,7 @@ export const NewAssessmentPage: React.FC = () => {
       {currentStep === 3 && (
         <Card variant="default" className="p-8 space-y-6 animate-fadeIn">
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            Photo quality check
+            Check your photo
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -456,15 +458,11 @@ export const NewAssessmentPage: React.FC = () => {
                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 space-y-2">
                   <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-sm">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>✓ Technical Image Quality Passed</span>
+                    <span>Photo accepted</span>
                   </div>
                   <p className="text-xs text-emerald-700 dark:text-emerald-400 leading-relaxed">
-                    Image resolution, sharpness, and lighting meet technical screening thresholds.
+                    Your photo appears to show the selected body area and is clear enough to save.
                   </p>
-                  <div className="text-[11px] text-emerald-700 dark:text-emerald-400 pt-1 space-y-0.5">
-                    <p>• Sharpness (Laplacian Variance): <strong>{uploadedImage.blurScore}</strong> (Required: &ge; 100)</p>
-                    <p>• Luminance (Mean Grayscale): <strong>{uploadedImage.brightnessScore}</strong> (Required: 40 - 220)</p>
-                  </div>
                 </div>
               )}
 
@@ -472,19 +470,11 @@ export const NewAssessmentPage: React.FC = () => {
                 <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 space-y-2">
                   <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-sm">
                     <AlertCircle className="w-4 h-4 text-amber-600" />
-                    <span>⚠ Quality Advisory / Borderline Quality</span>
+                    <span>A clearer photo would help</span>
                   </div>
                   <p className="text-xs text-amber-700 dark:text-amber-300 font-medium leading-relaxed">
                     {uploadedImage.rejectionReason || 'Image quality may affect analysis accuracy. A clearer or better-lit photo is recommended.'}
                   </p>
-                  <div className="text-[11px] text-amber-700 dark:text-amber-400 pt-1 space-y-0.5">
-                    {uploadedImage.blurScore !== undefined && uploadedImage.blurScore !== null && (
-                      <p>• Sharpness Score: <strong>{uploadedImage.blurScore}</strong> (Ideal: &ge; 100)</p>
-                    )}
-                    {uploadedImage.brightnessScore !== undefined && uploadedImage.brightnessScore !== null && (
-                      <p>• Luminance Score: <strong>{uploadedImage.brightnessScore}</strong> (Ideal: 60 - 200)</p>
-                    )}
-                  </div>
                 </div>
               )}
 
@@ -492,19 +482,11 @@ export const NewAssessmentPage: React.FC = () => {
                 <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 space-y-2">
                   <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold text-sm">
                     <AlertCircle className="w-4 h-4 text-rose-600" />
-                    <span>✕ Image Quality Rejected</span>
+                    <span>Please upload another photo</span>
                   </div>
                   <p className="text-xs text-rose-700 dark:text-rose-300 font-medium leading-relaxed">
                     {uploadedImage.rejectionReason || 'The photograph does not meet quality requirements.'}
                   </p>
-                  <div className="text-[11px] text-rose-600 dark:text-rose-400 pt-1 space-y-0.5">
-                    {uploadedImage.blurScore !== undefined && uploadedImage.blurScore !== null && (
-                      <p>• Measured Sharpness: <strong>{uploadedImage.blurScore}</strong> (Required: &ge; 100)</p>
-                    )}
-                    {uploadedImage.brightnessScore !== undefined && uploadedImage.brightnessScore !== null && (
-                      <p>• Measured Luminance: <strong>{uploadedImage.brightnessScore}</strong> (Required: 40 - 220)</p>
-                    )}
-                  </div>
                 </div>
               )}
 
@@ -512,7 +494,7 @@ export const NewAssessmentPage: React.FC = () => {
                 <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 space-y-2">
                   <div className="flex items-center gap-2 text-blue-800 dark:text-blue-300 font-bold text-sm">
                     <Clock className="w-4 h-4" />
-                    <span>Quality Status: PENDING</span>
+                    <span>Photo check unavailable</span>
                   </div>
                   <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
                     Image uploaded successfully. Quality analysis is temporarily unavailable.
@@ -524,21 +506,14 @@ export const NewAssessmentPage: React.FC = () => {
                     isLoading={isLoading}
                     leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
                   >
-                    Retry Quality Analysis
+                    Try again
                   </Button>
                 </div>
               )}
 
               <p className="text-[10px] text-slate-400 italic">
-                * Note: Image quality evaluation strictly checks photographic sharpness & illumination. It does not perform clinical diagnosis.
+                These checks assess photo suitability, not your vitamin levels.
               </p>
-
-              <div className="text-xs text-slate-500 space-y-1">
-                <p>• Image ID: <strong>#{uploadedImage?.imageId}</strong></p>
-                <p>• File name: <strong>{uploadedImage?.originalFilename}</strong></p>
-                <p>• Size: <strong>{((uploadedImage?.fileSizeBytes || 0) / 1024).toFixed(1)} KB</strong></p>
-                <p>• Target Region: <strong>{selectedBodyPart}</strong></p>
-              </div>
 
               <div className="flex gap-2">
                 <Button
@@ -561,7 +536,7 @@ export const NewAssessmentPage: React.FC = () => {
             <Button
               variant="primary"
               size="md"
-              disabled={uploadedImage?.qualityStatus === 'REJECTED'}
+              disabled={!uploadedImage || !['PASSED', 'WARNING'].includes(uploadedImage.qualityStatus)}
               onClick={() => setCurrentStep(4)}
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
@@ -576,7 +551,7 @@ export const NewAssessmentPage: React.FC = () => {
         <Card variant="default" className="p-8 space-y-6 animate-fadeIn">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-              Symptom Questionnaire ({selectedBodyPart})
+              How have you been feeling?
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Select symptoms to save with your record. These will not be interpreted as findings from your photo.
@@ -588,9 +563,8 @@ export const NewAssessmentPage: React.FC = () => {
               symptomCatalog[selectedBodyPart].map((symptom, idx) => {
                 const isChecked = selectedSymptoms.includes(symptom);
                 return (
-                  <div
+                  <label
                     key={idx}
-                    onClick={() => toggleSymptom(symptom)}
                     className={`p-3.5 rounded-xl border cursor-pointer select-none transition-all flex items-center justify-between ${
                       isChecked
                         ? 'bg-health-50/70 dark:bg-health-950/50 border-health-500 text-slate-900 dark:text-slate-100'
@@ -601,10 +575,10 @@ export const NewAssessmentPage: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={isChecked}
-                      onChange={() => {}}
+                      onChange={() => toggleSymptom(symptom)}
                       className="rounded text-health-600 focus:ring-health-500"
                     />
-                  </div>
+                  </label>
                 );
               })}
           </div>
@@ -624,13 +598,13 @@ export const NewAssessmentPage: React.FC = () => {
       {currentStep === 5 && (
         <Card variant="default" className="p-8 space-y-6 animate-fadeIn">
           <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            Review Assessment Details & Medical Consent
+            Review your record
           </h3>
 
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 space-y-3 text-xs">
             <p><strong>Target Region:</strong> {selectedBodyPart}</p>
             <p><strong>Attached Photo:</strong> {uploadedImage?.originalFilename} ({((uploadedImage?.fileSizeBytes || 0) / 1024).toFixed(1)} KB)</p>
-            <p><strong>Quality Evaluation:</strong> {uploadedImage?.qualityStatus} (Blur: {uploadedImage?.blurScore}, Brightness: {uploadedImage?.brightnessScore})</p>
+            <p><strong>Photo check:</strong> {uploadedImage?.qualityStatus === 'PASSED' ? 'Accepted' : 'Review needed'}</p>
             <div>
               <strong>Reported Symptoms ({selectedSymptoms.length}):</strong>
               {selectedSymptoms.length > 0 ? (
@@ -640,7 +614,7 @@ export const NewAssessmentPage: React.FC = () => {
                   ))}
                 </ul>
               ) : (
-                <p className="text-slate-400 mt-1">No symptoms checked (Visual analysis only)</p>
+                <p className="text-slate-400 mt-1">No symptoms selected</p>
               )}
             </div>
           </div>
@@ -655,7 +629,7 @@ export const NewAssessmentPage: React.FC = () => {
                 className="mt-0.5 rounded text-amber-600 focus:ring-amber-500"
               />
               <span>
-                I understand that photo quality checks do not identify a deficiency. The current model is not validated for photo screening, and this record is <strong>not a medical diagnosis</strong>.
+                I understand that this app cannot diagnose vitamin deficiencies from a photo. This record is <strong>not a medical diagnosis</strong>.
               </span>
             </label>
           </div>
@@ -672,7 +646,7 @@ export const NewAssessmentPage: React.FC = () => {
               onClick={handleCompleteAssessment}
               rightIcon={<ArrowRight className="w-5 h-5" />}
             >
-              Save and check assessment
+              Save my assessment
             </Button>
           </div>
         </Card>

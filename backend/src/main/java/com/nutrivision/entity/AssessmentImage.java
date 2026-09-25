@@ -28,6 +28,15 @@ public class AssessmentImage {
     @Column(name = "mime_type", length = 50, nullable = false)
     private String mimeType;
 
+    // Database copy survives ephemeral hosting restarts. Never included in DTOs.
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
+    private byte[] imageData;
+
+    public byte[] getImageData() { return imageData; }
+    public void setImageData(byte[] value) { imageData = value; }
+
     @Enumerated(EnumType.STRING)
     @Column(name = "quality_status", length = 30, nullable = false)
     private QualityStatus qualityStatus = QualityStatus.PENDING;

@@ -51,7 +51,6 @@ export const AppLayout: React.FC = () => {
   const settingItems = [
     { label: 'Profile', path: '/profile', icon: <User className="w-5 h-5" /> },
     { label: 'Settings', path: '/settings', icon: <Settings className="w-5 h-5" /> },
-    { label: 'System Diagnostics', path: '/dev/status', icon: <ActivitySquare className="w-5 h-5" /> },
   ];
 
   const handleLogout = async () => {

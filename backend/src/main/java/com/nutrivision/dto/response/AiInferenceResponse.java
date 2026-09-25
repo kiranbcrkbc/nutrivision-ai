@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AiInferenceResponse {
+    private java.util.Map<String, Object> contentEvaluation;
+    public java.util.Map<String, Object> getContentEvaluation() { return contentEvaluation; }
+    public void setContentEvaluation(java.util.Map<String, Object> value) { contentEvaluation = value; }
     private List<String> reportedSymptoms = new ArrayList<>();
     public List<String> getReportedSymptoms() { return reportedSymptoms; }
     public void setReportedSymptoms(List<String> value) { reportedSymptoms = value; }

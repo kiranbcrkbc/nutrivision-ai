@@ -13,12 +13,12 @@ export const LandingPage: React.FC = () => <div className="bg-[#f7faf8] dark:bg-
     </div>
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-7 sm:p-10 shadow-xl shadow-slate-200/40 dark:shadow-none space-y-7">
       <div className="flex items-center gap-3"><div className="p-3 bg-health-50 dark:bg-health-950 rounded-2xl"><Leaf className="w-7 h-7 text-health-700" /></div><div><h2 className="font-bold text-xl">Small steps, better understanding</h2><p className="text-sm text-slate-500">Your personal nutrition companion</p></div></div>
-      {[['01','Record your concern','Choose a body area and upload a photo for a quality check.'],['02','Understand the limitations','We tell you when a photo cannot support a reliable result.'],['03','Take the next step','Explore food guidance, save your history, or find a clinician.']].map(([number,title,body]) => <div key={number} className="flex gap-4"><span className="text-health-600 font-bold text-sm pt-1">{number}</span><div><h3 className="font-semibold">{title}</h3><p className="text-sm text-slate-500 mt-1 leading-relaxed">{body}</p></div></div>)}
-      <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-amber-900 dark:text-amber-200"><strong>Photo screening is not yet validated.</strong> The current prototype can check image quality but cannot reliably identify vitamin deficiencies or verify the selected body area. It will not assign you a diagnosis.</div>
+      {[['01','Record your concern','Choose a body area and upload a clear close-up photo.'],['02','Check your photo','Get feedback on photo clarity and body-area suitability.'],['03','Take the next step','Explore food guidance, save your history, or find a clinician.']].map(([number,title,body]) => <div key={number} className="flex gap-4"><span className="text-health-600 font-bold text-sm pt-1">{number}</span><div><h3 className="font-semibold">{title}</h3><p className="text-sm text-slate-500 mt-1 leading-relaxed">{body}</p></div></div>)}
+      <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-amber-900 dark:text-amber-200"><strong>Know what a photo can tell you.</strong> Photo checks help you create a useful record. Vitamin deficiencies require professional assessment and, when appropriate, laboratory tests.</div>
     </div>
   </section>
   <section className="max-w-6xl mx-auto px-6 pb-20"><div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{[
-    {icon:Camera,title:'Photo quality checks',text:'Get feedback on lighting, clarity, and image size.',href:'/assessment/new'},
+    {icon:Camera,title:'Smarter photo uploads',text:'Check clarity and body-area suitability before saving.',href:'/assessment/new'},
     {icon:BookOpen,title:'Food & vitamin guidance',text:'Explore everyday food sources and nutrition information.',href:'/recommendations'},
     {icon:History,title:'Your saved history',text:'Review your own assessments and recorded outcomes.',href:'/history'},
     {icon:MapPin,title:'Find professional care',text:'Search Bengaluru for a physician or dietitian.',href:'/doctors'},

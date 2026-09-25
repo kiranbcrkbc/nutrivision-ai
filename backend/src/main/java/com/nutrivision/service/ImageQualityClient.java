@@ -59,6 +59,10 @@ public class ImageQualityClient {
      * If the service is unreachable or errors, gracefully returns a PENDING status result.
      */
     public ImageQualityResult analyzeImage(byte[] imageBytes, String filename) {
+        return analyzeImage(imageBytes, filename, "");
+    }
+
+    public ImageQualityResult analyzeImage(byte[] imageBytes, String filename, String bodyPart) {
         String endpoint = this.aiServiceBaseUrl + "/analyze-image";
 
         try {
@@ -74,6 +78,7 @@ public class ImageQualityClient {
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
             body.add("file", fileResource);
+            body.add("target_body_part", bodyPart);
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

@@ -1,5 +1,15 @@
 # Repair checkpoint — 24 September 2026
 
+## 25 September follow-up (supersedes implementation gaps below)
+
+- Added local fixed-taxonomy CLIP suitability checking to upload and inference routes. Burger rejected across all six selections; real eye/tongue/lips/nails controls recognized, mismatches rejected. No diagnostic classifier is enabled. Thresholds are provisional, with no population accuracy claim.
+- AI regression suite: 38 passed. Backend: 30 passed, including database-copy retrieval after deleting the test disk image, owner isolation, and legacy admin credential revocation. Frontend lint/build passed.
+- New uploads retain a database byte copy to survive ephemeral disk loss. Earlier missing images cannot be recovered automatically.
+- Shortened copy on public, upload, result and report screens; removed fake email-reset success and user-facing developer navigation.
+- Render sign-in is available. Deployment and live workflow verification are in progress; local test results alone are not release evidence.
+
+Earlier checkpoint follows for audit history:
+
 ## Release status: NOT READY FOR PRODUCTION DELIVERY
 
 The current revision repairs fabrication and workflow defects. It does not supply a medically validated image classifier. The live deployment still runs the older code.

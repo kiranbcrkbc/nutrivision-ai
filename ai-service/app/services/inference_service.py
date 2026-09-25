@@ -13,6 +13,7 @@ from app.schemas.quality import ImageQualityResponse
 from app.schemas.inference import InferenceResponse, PredictionItem
 from app.services.quality_service import evaluate_image_quality
 from app.services.model_service import model_service
+from app.services.content_service import content_service
 
 
 def run_screening_inference(
@@ -50,17 +51,24 @@ def run_screening_inference(
             message=quality_res.rejectionReason or "Image quality does not meet technical sharpness or illumination requirements."
         )
 
-    # Sharpness and lighting do not establish anatomy or medical validity.
+    content = content_service.check(image_bytes, normalized_body_part)
+    if content["status"] != "ACCEPTED":
+        state = "IMAGE_REJECTED" if content["status"] == "REJECTED" else "CONTENT_CHECK_UNAVAILABLE"
+        return InferenceResponse(status=state, inferenceStatus=state,
+                                 targetBodyPart=normalized_body_part, qualityEvaluation=quality_res,
+                                 contentEvaluation=content, message=content["message"])
+
+    # Photo suitability is separate from medical validity.
     if not model_service.is_screening_validated():
         return InferenceResponse(
             status="SCREENING_UNAVAILABLE", modelAvailable=False,
             modelStatus="NOT_VALIDATED", inferenceStatus="SCREENING_UNAVAILABLE",
             targetBodyPart=normalized_body_part, qualityEvaluation=quality_res,
+            contentEvaluation=content,
             predictions=[], topPrediction=None,
-            message="We checked photo quality, but cannot verify that it shows the selected body area "
-                    "or reliably identify a deficiency. The current model was trained on synthetic drawings, "
-                    "not validated patient photographs. No medical prediction has been made. "
-                    "You can explore nutrition information or discuss persistent symptoms with a clinician."
+            message="Your photo passed the quality and body-area checks. Vitamin deficiencies cannot be "
+                    "reliably determined by this app from a photo. Your record is saved; explore food guidance "
+                    "or discuss your symptoms and any needed tests with a clinician."
         )
 
     # Step 3: Check Model Availability

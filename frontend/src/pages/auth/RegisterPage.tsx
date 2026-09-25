@@ -145,7 +145,7 @@ export const RegisterPage: React.FC = () => {
                   className="mt-0.5 rounded text-health-600 focus:ring-health-500 border-slate-300 dark:border-slate-700 dark:bg-slate-800"
                 />
                 <span>
-                  I understand that Vitamin Deficiency is an educational prototype providing preliminary indicators only, and is NOT a substitute for clinical medical diagnosis.
+                  I understand that Vitamin Deficiency provides educational information and photo records, not a medical diagnosis.
                 </span>
               </label>
               {errors.agreeTerms && (

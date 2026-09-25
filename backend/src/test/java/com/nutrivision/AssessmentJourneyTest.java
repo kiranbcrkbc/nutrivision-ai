@@ -34,6 +34,8 @@ class AssessmentJourneyTest {
     @Autowired ObjectMapper json;
     @MockBean AiInferenceClient ai;
     @MockBean ImageQualityClient quality;
+    @Autowired com.nutrivision.repository.AssessmentImageRepository images;
+    @Autowired FileStorageService storage;
 
     String account(String email) throws Exception {
         String body = json.writeValueAsString(Map.of("fullName", "Test Account", "email", email,
@@ -50,10 +52,19 @@ class AssessmentJourneyTest {
             .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         long id = json.readTree(response).path("data").path("assessmentId").asLong();
         assertTrue(id > 0);
-        when(quality.analyzeImage(any(), any())).thenReturn(new ImageQualityResult("PASSED", 150f, 120f, null));
+        when(quality.analyzeImage(any(), any(), eq("EYES"))).thenReturn(new ImageQualityResult("PASSED", 150f, 120f, null));
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         ImageIO.write(new BufferedImage(320,320,BufferedImage.TYPE_INT_RGB), "png", bytes);
-        mvc.perform(multipart("/api/assessments/"+id+"/images").file(new MockMultipartFile("file", "test.png", "image/png", bytes.toByteArray())).header("Authorization", owner)).andExpect(status().isCreated());
+        String upload = mvc.perform(multipart("/api/assessments/"+id+"/images").file(new MockMultipartFile("file", "test.png", "image/png", bytes.toByteArray())).header("Authorization", owner)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        long imageId = json.readTree(upload).path("data").path("imageId").asLong();
+        assertEquals("PASSED", json.readTree(upload).path("data").path("qualityStatus").asText());
+        // Simulate loss of ephemeral disk: retrieval and inference must use the database copy.
+        var storedImage = images.findById(imageId).orElseThrow();
+        assertArrayEquals(bytes.toByteArray(), storedImage.getImageData());
+        assertTrue(storage.deletePhysicalFile(storedImage.getFilePath()));
+        mvc.perform(get("/api/assessments/"+id+"/images/"+imageId+"/view").header("Authorization", owner))
+            .andExpect(status().isOk()).andExpect(content().bytes(bytes.toByteArray()));
+        mvc.perform(get("/api/assessments/"+id+"/images/"+imageId+"/view").header("Authorization", other)).andExpect(status().isForbidden());
         when(ai.screenImage(any(), any(), any())).thenReturn(AiInferenceResponse.fallback("No validated screening model", "EYES"));
         mvc.perform(post("/api/assessments/"+id+"/screen").header("Authorization", owner).contentType("application/json").content("{\"symptoms\":[\"Dry eyes\"]}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.data.predictions").isEmpty());

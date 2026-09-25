@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 from app.services.model_service import model_service
+from app.services.content_service import content_service
 
 router = APIRouter(tags=["Health"])
 
@@ -18,6 +19,7 @@ class HealthResponse(BaseModel):
     inferenceModel: str
     modelAvailable: bool
     screeningAvailable: bool = False
+    photoContentCheck: str = "UNAVAILABLE"
     validationNote: str = "Synthetic demonstration model; photo screening is not validated."
     activeModel: Optional[str] = None
     disclaimer: str
@@ -48,6 +50,7 @@ def get_detailed_health() -> HealthResponse:
         inferenceModel=model_service.get_model_status(),
         modelAvailable=model_service.is_model_ready(),
         activeModel=meta.get("model_name"),
+        photoContentCheck="READY" if content_service.ready() else "UNAVAILABLE",
         disclaimer=(
             "Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. "
             "They are not medically certified diagnoses."

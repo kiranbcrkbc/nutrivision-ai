@@ -120,3 +120,5 @@ pnpm-debug.log*
 Thumbs.db
 desktop.ini
 .venv-ai/
+ai-service/models/content/*.onnx
+ai-service/models/content/tokenizer.json

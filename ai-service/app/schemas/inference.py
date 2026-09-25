@@ -27,6 +27,7 @@ class InferenceResponse(BaseModel):
     modelVersion: Optional[str] = None
     targetBodyPart: Optional[str] = None
     qualityEvaluation: Optional[ImageQualityResponse] = None
+    contentEvaluation: Optional[dict] = None
     predictions: List[PredictionItem] = []
     topPrediction: Optional[PredictionItem] = None
     explainabilityStatus: str = "EXPLAINABILITY_NOT_AVAILABLE"  # "READY" | "EXPLAINABILITY_NOT_AVAILABLE"
@@ -36,4 +37,3 @@ class InferenceResponse(BaseModel):
         "Vitamin Deficiency provides AI-based preliminary screening indicators only. "
         "This is not a medical diagnosis. Always consult a qualified healthcare professional for clinical advice."
     )
-

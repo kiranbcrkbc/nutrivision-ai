@@ -163,7 +163,7 @@ public class AssessmentService {
         FileStorageService.StoredFileInfo fileInfo = fileStorageService.storeAssessmentImage(assessmentId, file);
 
         // Evaluate image quality with OpenCV FastAPI Engine
-        ImageQualityResult qualityResult = imageQualityClient.analyzeImage(fileBytes, fileInfo.getOriginalFilename());
+        ImageQualityResult qualityResult = imageQualityClient.analyzeImage(fileBytes, fileInfo.getOriginalFilename(), assessment.getTargetBodyPart().name());
 
         // Create AssessmentImage entity
         AssessmentImage image = new AssessmentImage(
@@ -175,6 +175,8 @@ public class AssessmentService {
         );
 
         applyQualityResult(image, qualityResult);
+
+        image.setImageData(fileBytes);
 
         AssessmentImage savedImage = assessmentImageRepository.save(image);
 
@@ -200,14 +202,15 @@ public class AssessmentService {
             throw new IllegalArgumentException("Image #" + imageId + " does not belong to assessment #" + assessmentId);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         try {
             byte[] bytes = resource.getInputStream().readAllBytes();
-            ImageQualityResult qualityResult = imageQualityClient.analyzeImage(bytes, image.getOriginalFilename());
+            ImageQualityResult qualityResult = imageQualityClient.analyzeImage(bytes, image.getOriginalFilename(), assessment.getTargetBodyPart().name());
 
             applyQualityResult(image, qualityResult);
 
             AssessmentImage updated = assessmentImageRepository.save(image);
+            invalidateScreening(assessment);
             return assessmentMapper.toImageDto(updated);
 
         } catch (IOException e) {
@@ -273,7 +276,7 @@ public class AssessmentService {
             throw new IllegalArgumentException("Image #" + imageId + " does not belong to assessment #" + assessmentId);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         return new ImageResourceResult(resource, image.getMimeType(), image.getOriginalFilename());
     }
 
@@ -283,6 +286,14 @@ public class AssessmentService {
         assessment.setCompletedAt(null);
         assessment.setStatus(AssessmentStatus.IN_PROGRESS);
         assessmentRepository.save(assessment);
+    }
+
+    private Resource imageResource(AssessmentImage image) {
+        if (image.getImageData() != null) {
+            return new org.springframework.core.io.ByteArrayResource(image.getImageData());
+        }
+        // Compatibility with earlier records; lost legacy files cannot be reconstructed.
+        return fileStorageService.loadAsResource(image.getFilePath());
     }
 
     private void applyQualityResult(AssessmentImage image, ImageQualityResult qualityResult) {
@@ -347,7 +358,7 @@ public class AssessmentService {
             image = images.get(images.size() - 1);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         try {
             byte[] bytes = resource.getInputStream().readAllBytes();
             AiInferenceResponse result = aiInferenceClient.screenImage(

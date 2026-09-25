@@ -70,9 +70,9 @@ export const PreliminaryResultView: React.FC<PreliminaryResultViewProps> = ({
   if (screeningResult?.status !== 'SUCCESS' || !topPrediction) {
     return <Card className="p-6 sm:p-8 space-y-5 max-w-3xl mx-auto">
       <AlertCircle className="w-9 h-9 text-amber-600" />
-      <h2 className="text-2xl font-bold">No reliable photo result available</h2>
+      <h2 className="text-2xl font-bold">{screeningResult?.status === 'IMAGE_REJECTED' ? 'Please upload the correct photo' : screeningResult?.contentEvaluation?.status === 'ACCEPTED' ? 'Photo checked. Your record is saved.' : 'Photo check incomplete'}</h2>
       <p className="text-slate-600 dark:text-slate-300">{screeningResult?.message || 'The analysis did not return a result. Please try again later.'}</p>
-      <p className="text-sm">A photo quality check only measures lighting and sharpness. It does not confirm the body area or a deficiency. No confidence score or risk level has been assigned.</p>
+      <p className="text-sm">Photo checks assess image suitability. They do not diagnose vitamin deficiencies.</p>
       {selectedSymptoms.length > 0 && <div><h3 className="font-semibold">Symptoms you selected</h3><ul className="list-disc pl-5">{selectedSymptoms.map(s => <li key={s}>{s}</li>)}</ul><p className="text-sm mt-2">These are self-reported symptoms, not findings from your photo.</p></div>}
       <div className="flex flex-wrap gap-3">
         <Link to="/recommendations"><Button>Explore food guidance</Button></Link>

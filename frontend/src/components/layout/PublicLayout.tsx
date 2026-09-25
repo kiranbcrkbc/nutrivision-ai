@@ -141,11 +141,11 @@ export const PublicLayout: React.FC = () => {
                 </span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-                An educational prototype for photo quality checks, symptom records, food guidance, and finding professional care. Photo-based deficiency screening is not yet validated.
+                Your space for photo and symptom records, everyday food guidance, and informed conversations about nutrition.
               </p>
               <div className="mt-4 flex items-center gap-2 text-xs text-health-700 dark:text-health-400 font-medium">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Educational College Prototype • Non-Diagnostic System</span>
+                <span>Nutrition education · Not a diagnosis</span>
               </div>
             </div>
 
@@ -158,7 +158,6 @@ export const PublicLayout: React.FC = () => {
                 <li><Link to="/how-it-works" className="hover:text-health-600 dark:hover:text-health-400">How It Works</Link></li>
                 <li><Link to="/about" className="hover:text-health-600 dark:hover:text-health-400">About the Project</Link></li>
                 <li><Link to="/disclaimer" className="hover:text-health-600 dark:hover:text-health-400">Medical Disclaimer</Link></li>
-                <li><Link to="/dev/status" className="hover:text-health-600 dark:hover:text-health-400">Service Status (Dev)</Link></li>
               </ul>
             </div>
 
@@ -173,11 +172,11 @@ export const PublicLayout: React.FC = () => {
           </div>
 
           <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 dark:text-slate-500">
-            <p>© {new Date().getFullYear()} Vitamin Deficiency Project. Built with Free & Open Source Technologies.</p>
+            <p>© {new Date().getFullYear()} Vitamin Deficiency</p>
             <div className="flex items-center gap-4">
               <Link to="/disclaimer" className="hover:underline">Medical Disclaimer</Link>
               <span>•</span>
-              <Link to="/about" className="hover:underline">Ethical AI Policies</Link>
+              <Link to="/about" className="hover:underline">About</Link>
             </div>
           </div>
         </div>

@@ -31,7 +31,7 @@ def photo(kind="noise", size=(320, 320), format="PNG"):
 @pytest.mark.parametrize("body", ["EYES", "NAILS", "SKIN", "HAIR", "LIPS", "TONGUE"])
 def test_unrelated_photo_never_gets_deficiency(body):
     result = run_screening_inference(photo("phone"), body)
-    assert result.status == "SCREENING_UNAVAILABLE"
+    assert result.status == "IMAGE_REJECTED"
     assert not result.predictions and result.topPrediction is None
     assert not result.modelAvailable
 
@@ -55,7 +55,7 @@ def test_unsupported_format():
 def test_multipart_formats_return_honest_outcome(format):
     result = client.post("/api/ai/inference/analyze", files={"file": ("image." + format.lower(), photo(format=format), "image/" + format.lower())}, data={"target_body_part": "EYES"})
     assert result.status_code == 200, result.text
-    assert result.json()["status"] == "SCREENING_UNAVAILABLE"
+    assert result.json()["status"] == "IMAGE_REJECTED"
     assert result.json()["predictions"] == []
 
 def test_oversized_upload():

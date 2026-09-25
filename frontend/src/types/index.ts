@@ -41,8 +41,9 @@ export interface PredictionItem {
 }
 
 export interface InferenceResponse {
+  contentEvaluation?: { status: string; detectedBodyPart?: string; message: string };
   reportedSymptoms?: string[];
-  status: 'SUCCESS' | 'QUALITY_REJECTED' | 'MODEL_NOT_AVAILABLE' | 'ERROR' | 'SERVICE_UNAVAILABLE' | 'SCREENING_UNAVAILABLE' | 'INVALID_BODY_PART';
+  status: 'SUCCESS' | 'QUALITY_REJECTED' | 'MODEL_NOT_AVAILABLE' | 'ERROR' | 'SERVICE_UNAVAILABLE' | 'SCREENING_UNAVAILABLE' | 'INVALID_BODY_PART' | 'IMAGE_REJECTED' | 'CONTENT_CHECK_UNAVAILABLE';
   modelAvailable: boolean;
   modelStatus: string;
   inferenceStatus: string;

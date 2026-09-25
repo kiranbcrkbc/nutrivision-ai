@@ -241,31 +241,16 @@ export const AssessmentDetailPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Activity className="w-5 h-5 text-health-600 animate-pulse" />
                       <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-                        AI Screening Analysis Results
+                        Photo assessment
                       </h4>
                     </div>
                     <Badge variant={inferenceResult.status === 'SUCCESS' ? 'success' : 'warning'} size="sm">
-                      {inferenceResult.inferenceStatus}
+                      {inferenceResult.contentEvaluation?.status === 'ACCEPTED' ? 'Photo checked' : 'Review needed'}
                     </Badge>
                   </div>
 
-                  {/* Quality Engine Status */}
-                  {inferenceResult.qualityEvaluation && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs bg-white/70 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800">
-                      <div>
-                        <span className="text-slate-400 block text-[10px]">Quality Gate</span>
-                        <strong className="text-slate-800 dark:text-slate-200">{inferenceResult.qualityEvaluation.qualityStatus}</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 block text-[10px]">Sharpness (Laplacian)</span>
-                        <strong className="text-slate-800 dark:text-slate-200">{inferenceResult.qualityEvaluation.blurScore?.toFixed(1) || 'N/A'}</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 block text-[10px]">Illumination Score</span>
-                        <strong className="text-slate-800 dark:text-slate-200">{inferenceResult.qualityEvaluation.brightnessScore?.toFixed(1) || 'N/A'}</strong>
-                      </div>
-                    </div>
-                  )}
+                  <p className="text-sm text-slate-600 dark:text-slate-300">{inferenceResult.message}</p>
+                  {inferenceResult.contentEvaluation?.status === 'ACCEPTED' && <p className="text-sm text-health-700">Photo suitability check passed.</p>}
 
                   {/* Predictions List */}
                   {inferenceResult.predictions && inferenceResult.predictions.length > 0 && (
@@ -314,10 +299,7 @@ export const AssessmentDetailPage: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="text-[11px] text-slate-400 flex items-center gap-1.5 pt-1">
-                    <Cpu className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Model: {inferenceResult.modelName || 'MobileNetV2 NutriVision'} ({inferenceResult.modelVersion || 'v1.0.0'})</span>
-                  </div>
+
                 </div>
               )}
 
