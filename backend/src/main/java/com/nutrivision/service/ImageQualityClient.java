@@ -20,12 +20,14 @@ public class ImageQualityClient {
     private static final Logger log = LoggerFactory.getLogger(ImageQualityClient.class);
 
     private final String aiServiceBaseUrl;
+    private final int timeoutMs;
     private final RestTemplate restTemplate;
 
     public ImageQualityClient(
             @Value("${app.ai-service.url:http://localhost:8000}") String aiServiceBaseUrl,
             @Value("${app.ai-service.timeout-ms:15000}") int timeoutMs) {
         this.aiServiceBaseUrl = normalizeUrl(aiServiceBaseUrl);
+        this.timeoutMs = timeoutMs;
 
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(Math.min(timeoutMs, 10000));
@@ -83,11 +85,7 @@ public class ImageQualityClient {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
             log.debug("Dispatching image quality request to {}", endpoint);
-            ResponseEntity<ImageQualityResult> response = restTemplate.postForEntity(
-                    endpoint,
-                    requestEntity,
-                    ImageQualityResult.class
-            );
+            ResponseEntity<ImageQualityResult> response = AiPhotoRequest.post(endpoint, requestEntity, ImageQualityResult.class, timeoutMs);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 ImageQualityResult result = response.getBody();
@@ -99,6 +97,9 @@ public class ImageQualityClient {
                 return ImageQualityResult.pending("Image quality analysis returned an unexpected response.");
             }
 
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            log.warn("Photo service refused request after bounded retries: HTTP {}", e.getStatusCode().value());
+            return ImageQualityResult.pending("Your photo is saved. The photo service is busy or waking up. Please retry the saved photo shortly.");
         } catch (ResourceAccessException e) {
             log.warn("Image quality microservice is unreachable at {}: {}", endpoint, e.getMessage());
             return ImageQualityResult.pending("Image uploaded successfully. Quality analysis is temporarily unavailable.");

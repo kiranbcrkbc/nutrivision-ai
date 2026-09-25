@@ -497,7 +497,7 @@ export const NewAssessmentPage: React.FC = () => {
                     <span>Photo check unavailable</span>
                   </div>
                   <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-                    Your photo is saved. The photo-check service has not responded yet. Retry the check without uploading again; it may take up to 2 minutes.
+                    {uploadedImage.rejectionReason || 'Your photo is saved. The service is busy or waking up. Retry this photo shortly; you do not need to upload again.'}
                   </p>
                   <Button
                     variant="outline"

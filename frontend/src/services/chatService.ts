@@ -14,10 +14,11 @@ export interface ChatMessageResponse {
 }
 
 export const chatService = {
-  sendMessage: async (message: string, assessmentId?: number): Promise<ChatMessageResponse> => {
+  sendMessage: async (message: string, assessmentId?: number, previousTopic?: string): Promise<ChatMessageResponse> => {
     const res = await api.post('/chat/message', {
       message,
       assessmentId,
+      previousTopic,
     });
     return res.data?.data;
   },

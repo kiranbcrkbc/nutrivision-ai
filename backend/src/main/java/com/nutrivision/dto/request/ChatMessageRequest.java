@@ -11,6 +11,12 @@ public class ChatMessageRequest {
 
     private Long assessmentId;
 
+    @Size(max = 80)
+    private String previousTopic;
+
+    public String getPreviousTopic() { return previousTopic; }
+    public void setPreviousTopic(String previousTopic) { this.previousTopic = previousTopic; }
+
     public ChatMessageRequest() {}
 
     public ChatMessageRequest(String message, Long assessmentId) {
