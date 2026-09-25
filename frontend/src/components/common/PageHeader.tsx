@@ -19,7 +19,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 ${className}`}>
       <div>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="editorial-heading text-3xl sm:text-4xl text-slate-900 dark:text-slate-100">
             {title}
           </h1>
           {badge}
