@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AiInferenceResponse {
+    private java.util.Map<String, Object> contentEvaluation;
+    public java.util.Map<String, Object> getContentEvaluation() { return contentEvaluation; }
+    public void setContentEvaluation(java.util.Map<String, Object> value) { contentEvaluation = value; }
+    private List<String> reportedSymptoms = new ArrayList<>();
+    public List<String> getReportedSymptoms() { return reportedSymptoms; }
+    public void setReportedSymptoms(List<String> value) { reportedSymptoms = value; }
     private String status;
     private Boolean modelAvailable = false;
     private String modelStatus;
@@ -17,7 +23,7 @@ public class AiInferenceResponse {
     private String explainabilityStatus = "EXPLAINABILITY_NOT_AVAILABLE";
     private String gradcamPath;
     private String message;
-    private String medicalDisclaimer = "NutriVision AI provides AI-based preliminary screening indicators only. This is not a medical diagnosis. Always consult a qualified healthcare professional for clinical advice.";
+    private String medicalDisclaimer = "Vitamin Deficiency provides AI-based preliminary screening indicators only. This is not a medical diagnosis. Always consult a qualified healthcare professional for clinical advice.";
 
     public AiInferenceResponse() {
     }

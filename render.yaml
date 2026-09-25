@@ -35,17 +35,19 @@ services:
         sync: false
       - key: SPRING_DATASOURCE_USERNAME
         value: "2vsoFfJUyF5U1VJ.root"
+      - key: APP_JWT_SECRET
+        generateValue: true
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: APP_CORS_ALLOWED_ORIGINS
-        value: "https://kiranbcrkbc-nutrivision-ai.onrender.com,https://kiranbcrkbc-nutrivision.onrender.com,http://localhost:5173"
+        value: "https://kiranbcrkbc-nutrivision-ai.onrender.com,https://kiranbcrkbc-nutrivision.onrender.com"
 
   # 3. Frontend UI (React 18 + Vite Static Site)
   - type: web
     name: kiranbcrkbc-nutrivision-ai
     env: static
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     routes:
       - type: rewrite

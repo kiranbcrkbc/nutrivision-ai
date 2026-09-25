@@ -84,7 +84,8 @@ class NutritionServiceTest {
     void testGetSupportedCategories() {
         List<CategoryMetadataDto> categories = nutritionService.getSupportedCategories();
         assertNotNull(categories);
-        assertEquals(6, categories.size());
+        assertEquals(7, categories.size());
+        assertTrue(categories.stream().anyMatch(c -> c.getCode().equals("Vitamin_D_Deficiency")));
         assertTrue(categories.stream().anyMatch(c -> c.getCode().equals("Iron_Deficiency")));
         assertTrue(categories.stream().anyMatch(c -> c.getCode().equals("Vitamin_B12_Deficiency")));
         assertTrue(categories.stream().anyMatch(c -> c.getCode().equals("Zinc_Deficiency")));

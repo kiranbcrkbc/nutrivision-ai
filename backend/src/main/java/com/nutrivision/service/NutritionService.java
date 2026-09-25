@@ -49,6 +49,7 @@ public class NutritionService {
     @Transactional(readOnly = true)
     public List<CategoryMetadataDto> getSupportedCategories() {
         return Arrays.asList(
+                new CategoryMetadataDto("Vitamin_D_Deficiency", "Vitamin D (education only)", "Vitamin D", "Cannot be determined from photos; ask a clinician whether testing is appropriate."),
                 new CategoryMetadataDto(
                         DeficiencyCategory.IRON_DEFICIENCY.getCode(),
                         "Iron Deficiency",
@@ -172,13 +173,25 @@ public class NutritionService {
             throw new AccessDeniedException("Access Denied: You cannot access recommendations for assessment #" + assessmentId);
         }
 
-        // Run or fetch screening result
-        AiInferenceResponse screening = assessmentService.screenAssessment(userEmail, assessmentId, null);
-        String category = "Healthy_Normal";
+        // Reading recommendations must not rerun inference or invent a category.
+        AiInferenceResponse screening = null;
+        if (assessment.getScreeningResultJson() != null) {
+            try {
+                screening = new com.fasterxml.jackson.databind.ObjectMapper().readValue(assessment.getScreeningResultJson(), AiInferenceResponse.class);
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                throw new IllegalStateException("Saved screening result could not be read.");
+            }
+        }
+        if (screening == null || !"SUCCESS".equals(screening.getStatus()) || screening.getTopPrediction() == null) {
+            throw new IllegalStateException("No reliable screening result is available. Explore general food guidance instead.");
+        }
+        String category;
         if (screening != null && screening.getTopPrediction() != null) {
             category = screening.getTopPrediction().getCategoryCode() != null
                     ? screening.getTopPrediction().getCategoryCode()
                     : screening.getTopPrediction().getDeficiencyCategory();
+        } else {
+            throw new IllegalStateException("No prediction available.");
         }
 
 

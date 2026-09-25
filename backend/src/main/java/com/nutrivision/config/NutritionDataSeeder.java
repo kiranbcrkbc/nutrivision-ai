@@ -32,6 +32,21 @@ public class NutritionDataSeeder implements CommandLineRunner {
         if (foodItemRepository.count() == 0) {
             seedFoodItems();
         }
+        // Add the new educational pathway even to an existing database.
+        if (guidanceRepository.findByCategory(DeficiencyCategory.VITAMIN_D_DEFICIENCY).isEmpty()) {
+            guidanceRepository.save(new NutrientGuidance(
+                DeficiencyCategory.VITAMIN_D_DEFICIENCY, "Vitamin D",
+                "General educational information. A photograph cannot measure vitamin D levels.",
+                "Supports calcium absorption, bones, and muscles.",
+                "Check food labels for vitamin D fortification. Source: https://ods.od.nih.gov/factsheets/VitaminD-Consumer/",
+                "Discuss ongoing symptoms with a clinician. Do not self-prescribe high-dose supplements."
+            ));
+            foodItemRepository.saveAll(List.of(
+                new FoodItem(DeficiencyCategory.VITAMIN_D_DEFICIENCY, "Vitamin D", "Fortified plant milk", null, DietType.VEGAN, FoodRegion.GENERAL, "Check the label for vitamin D.", "Choose an unsweetened option if suitable.", null, "Check ingredients for allergies.", 1),
+                new FoodItem(DeficiencyCategory.VITAMIN_D_DEFICIENCY, "Vitamin D", "Fortified dairy milk", null, DietType.VEGETARIAN, FoodRegion.GENERAL, "Check the label for vitamin D.", "Fortification varies by product.", null, "Avoid if allergic to milk.", 1),
+                new FoodItem(DeficiencyCategory.VITAMIN_D_DEFICIENCY, "Vitamin D", "Oily fish", null, DietType.NON_VEGETARIAN, FoodRegion.GENERAL, "Include in a balanced meal if suitable.", "A dietary source of vitamin D.", null, "Check for fish allergy.", 1)
+            ));
+        }
     }
 
     private void seedNutrientGuidance() {

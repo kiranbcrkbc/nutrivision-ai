@@ -18,6 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/ ./app/
 COPY models/ ./models/
+COPY scripts/prepare_content_model.py ./scripts/prepare_content_model.py
+RUN python scripts/prepare_content_model.py && rm -f models/content/text_model_quantized.onnx models/content/tokenizer.json
 
 ENV HOST=0.0.0.0
 ENV PORT=8000

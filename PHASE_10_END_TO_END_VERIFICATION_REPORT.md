@@ -1,3 +1,5 @@
+> Historical report from the previous implementation. Its success/accuracy claims do not establish real-photo validity or current production readiness. See docs/REPAIR_STATUS.md for the current audit.
+
 # Phase 10 — Complete End-to-End System Integration, Execution Audit & Production Readiness Report
 
 **System:** NutriVision AI – AI-Based Vitamin Deficiency Identification and Nutrition Recommendation System  

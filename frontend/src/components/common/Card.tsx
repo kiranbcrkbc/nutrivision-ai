@@ -23,6 +23,14 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
+      role={props.onClick ? 'button' : undefined}
+      tabIndex={props.onClick ? 0 : undefined}
+      onKeyDown={props.onClick ? (event) => {
+        if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          event.currentTarget.click();
+        }
+      } : undefined}
       className={`rounded-2xl overflow-hidden ${variantStyles[variant]} ${hoverStyle} ${className}`}
       {...props}
     >

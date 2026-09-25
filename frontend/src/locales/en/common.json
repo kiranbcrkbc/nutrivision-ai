@@ -1,6 +1,6 @@
 {
-  "brand": "NutriVision AI",
-  "tagline": "AI-Based Preliminary Vitamin Deficiency & Nutrition System",
+  "brand": "Vitamin Deficiency",
+  "tagline": "Nutrition & Wellbeing",
   "nav": {
     "home": "Home",
     "howItWorks": "How It Works",
@@ -21,7 +21,7 @@
   },
   "disclaimer": {
     "title": "Medical Safety Notice",
-    "bannerText": "Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment."
+    "bannerText": "Photo checks and food guidance are educational. This app cannot diagnose a deficiency. Discuss persistent symptoms with a qualified clinician."
   },
   "hero": {
     "badge": "AI-Assisted Preliminary Nutrition Screening",

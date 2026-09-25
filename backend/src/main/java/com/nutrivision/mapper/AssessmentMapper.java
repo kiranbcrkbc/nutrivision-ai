@@ -21,7 +21,7 @@ public class AssessmentMapper {
                 ? assessment.getImages().stream().map(this::toImageDto).collect(Collectors.toList())
                 : Collections.emptyList();
 
-        return new AssessmentDto(
+        AssessmentDto result = new AssessmentDto(
                 assessment.getAssessmentId(),
                 assessment.getUser() != null ? assessment.getUser().getUserId() : null,
                 assessment.getUser() != null ? assessment.getUser().getFullName() : null,
@@ -32,6 +32,15 @@ public class AssessmentMapper {
                 assessment.getCreatedAt(),
                 assessment.getCompletedAt()
         );
+        if (assessment.getScreeningResultJson() != null) {
+            try {
+                result.setScreeningResult(new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                    assessment.getScreeningResultJson(), com.nutrivision.dto.response.AiInferenceResponse.class));
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                throw new IllegalStateException("Saved screening result could not be read", e);
+            }
+        }
+        return result;
     }
 
     public AssessmentSummaryDto toSummaryDto(Assessment assessment) {

@@ -94,13 +94,13 @@ export const assessmentService = {
 
   screenAssessment: async (
     assessmentId: number | string,
-    imageId?: number | string
+    imageId?: number | string,
+    symptoms?: string[]
   ): Promise<InferenceResponse> => {
     const url = imageId
       ? `/assessments/${assessmentId}/images/${imageId}/screen`
       : `/assessments/${assessmentId}/screen`;
-    const res = await api.post(url);
+    const res = await api.post(url, symptoms ? { symptoms } : undefined);
     return res.data?.data;
   },
 };
-

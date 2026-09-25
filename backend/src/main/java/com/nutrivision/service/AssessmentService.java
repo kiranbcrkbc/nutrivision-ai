@@ -106,13 +106,17 @@ public class AssessmentService {
 
         try {
             AssessmentStatus status = AssessmentStatus.valueOf(request.getStatus().toUpperCase().trim());
+            if (status == AssessmentStatus.COMPLETED) {
+                throw new IllegalArgumentException("Only a successful screening can complete an assessment.");
+            }
             assessment.setStatus(status);
+            assessment.setCompletedAt(null);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid assessment status: " + request.getStatus());
         }
 
         if (request.getSeverityRiskLevel() != null && !request.getSeverityRiskLevel().isBlank()) {
-            assessment.setSeverityRiskLevel(request.getSeverityRiskLevel().trim());
+            throw new IllegalArgumentException("Risk levels cannot be assigned manually.");
         }
 
         Assessment saved = assessmentRepository.save(assessment);
@@ -159,7 +163,7 @@ public class AssessmentService {
         FileStorageService.StoredFileInfo fileInfo = fileStorageService.storeAssessmentImage(assessmentId, file);
 
         // Evaluate image quality with OpenCV FastAPI Engine
-        ImageQualityResult qualityResult = imageQualityClient.analyzeImage(fileBytes, fileInfo.getOriginalFilename());
+        ImageQualityResult qualityResult = imageQualityClient.analyzeImage(fileBytes, fileInfo.getOriginalFilename(), assessment.getTargetBodyPart().name());
 
         // Create AssessmentImage entity
         AssessmentImage image = new AssessmentImage(
@@ -172,13 +176,11 @@ public class AssessmentService {
 
         applyQualityResult(image, qualityResult);
 
+        image.setImageData(fileBytes);
+
         AssessmentImage savedImage = assessmentImageRepository.save(image);
 
-        // Transition assessment status from DRAFT to IN_PROGRESS if applicable
-        if (assessment.getStatus() == AssessmentStatus.DRAFT) {
-            assessment.setStatus(AssessmentStatus.IN_PROGRESS);
-            assessmentRepository.save(assessment);
-        }
+        invalidateScreening(assessment);
 
         return assessmentMapper.toImageDto(savedImage);
     }
@@ -200,14 +202,15 @@ public class AssessmentService {
             throw new IllegalArgumentException("Image #" + imageId + " does not belong to assessment #" + assessmentId);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         try {
             byte[] bytes = resource.getInputStream().readAllBytes();
-            ImageQualityResult qualityResult = imageQualityClient.analyzeImage(bytes, image.getOriginalFilename());
+            ImageQualityResult qualityResult = imageQualityClient.analyzeImage(bytes, image.getOriginalFilename(), assessment.getTargetBodyPart().name());
 
             applyQualityResult(image, qualityResult);
 
             AssessmentImage updated = assessmentImageRepository.save(image);
+            invalidateScreening(assessment);
             return assessmentMapper.toImageDto(updated);
 
         } catch (IOException e) {
@@ -253,6 +256,7 @@ public class AssessmentService {
 
         // Delete database record
         assessmentImageRepository.delete(image);
+        invalidateScreening(assessment);
     }
 
     @Transactional(readOnly = true)
@@ -272,8 +276,24 @@ public class AssessmentService {
             throw new IllegalArgumentException("Image #" + imageId + " does not belong to assessment #" + assessmentId);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         return new ImageResourceResult(resource, image.getMimeType(), image.getOriginalFilename());
+    }
+
+    private void invalidateScreening(Assessment assessment) {
+        assessment.setScreeningResultJson(null);
+        assessment.setSeverityRiskLevel(null);
+        assessment.setCompletedAt(null);
+        assessment.setStatus(AssessmentStatus.IN_PROGRESS);
+        assessmentRepository.save(assessment);
+    }
+
+    private Resource imageResource(AssessmentImage image) {
+        if (image.getImageData() != null) {
+            return new org.springframework.core.io.ByteArrayResource(image.getImageData());
+        }
+        // Compatibility with earlier records; lost legacy files cannot be reconstructed.
+        return fileStorageService.loadAsResource(image.getFilePath());
     }
 
     private void applyQualityResult(AssessmentImage image, ImageQualityResult qualityResult) {
@@ -307,8 +327,13 @@ public class AssessmentService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AiInferenceResponse screenAssessment(String userEmail, Long assessmentId, Long imageId) {
+        return screenAssessment(userEmail, assessmentId, imageId, null);
+    }
+
+    @Transactional
+    public AiInferenceResponse screenAssessment(String userEmail, Long assessmentId, Long imageId, List<String> symptoms) {
 
         User user = userRepository.findByEmail(userEmail.toLowerCase().trim())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -333,14 +358,26 @@ public class AssessmentService {
             image = images.get(images.size() - 1);
         }
 
-        Resource resource = fileStorageService.loadAsResource(image.getFilePath());
+        Resource resource = imageResource(image);
         try {
             byte[] bytes = resource.getInputStream().readAllBytes();
-            return aiInferenceClient.screenImage(
+            AiInferenceResponse result = aiInferenceClient.screenImage(
                     bytes,
                     image.getOriginalFilename(),
                     assessment.getTargetBodyPart().name()
             );
+            if (symptoms != null) {
+                result.setReportedSymptoms(symptoms.stream().filter(java.util.Objects::nonNull).map(String::trim).filter(s -> !s.isEmpty()).distinct().toList());
+            } else if (assessment.getScreeningResultJson() != null) {
+                AiInferenceResponse previous = new com.fasterxml.jackson.databind.ObjectMapper().readValue(assessment.getScreeningResultJson(), AiInferenceResponse.class);
+                result.setReportedSymptoms(previous.getReportedSymptoms());
+            }
+            assessment.setScreeningResultJson(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(result));
+            assessment.setSeverityRiskLevel(null);
+            assessment.setStatus("SUCCESS".equals(result.getStatus()) ? AssessmentStatus.COMPLETED : AssessmentStatus.IN_PROGRESS);
+            if (!"SUCCESS".equals(result.getStatus())) assessment.setCompletedAt(null);
+            assessmentRepository.save(assessment);
+            return result;
         } catch (IOException e) {
             throw new RuntimeException("Failed to read photograph bytes for screening: " + e.getMessage(), e);
         }

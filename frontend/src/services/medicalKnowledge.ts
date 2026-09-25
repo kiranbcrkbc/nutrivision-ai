@@ -1,5 +1,5 @@
 /**
- * NutriVision AI - Structured Medical Knowledge & Plain-Language Translation Layer
+ * Vitamin Deficiency - Structured Medical Knowledge & Plain-Language Translation Layer
  *
  * Enforces medical safety rules:
  * - Every medical term has an immediate plain English explanation.

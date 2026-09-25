@@ -1,5 +1,5 @@
 """
-NutriVision AI - Inference Schemas
+Vitamin Deficiency - Inference Schemas
 Data models for AI model inference and screening results.
 """
 
@@ -27,13 +27,13 @@ class InferenceResponse(BaseModel):
     modelVersion: Optional[str] = None
     targetBodyPart: Optional[str] = None
     qualityEvaluation: Optional[ImageQualityResponse] = None
+    contentEvaluation: Optional[dict] = None
     predictions: List[PredictionItem] = []
     topPrediction: Optional[PredictionItem] = None
     explainabilityStatus: str = "EXPLAINABILITY_NOT_AVAILABLE"  # "READY" | "EXPLAINABILITY_NOT_AVAILABLE"
     gradcamPath: Optional[str] = None
     message: Optional[str] = None
     medicalDisclaimer: str = (
-        "NutriVision AI provides AI-based preliminary screening indicators only. "
+        "Vitamin Deficiency provides AI-based preliminary screening indicators only. "
         "This is not a medical diagnosis. Always consult a qualified healthcare professional for clinical advice."
     )
-

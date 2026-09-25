@@ -147,8 +147,9 @@ public class AssessmentController {
     @PostMapping("/{id}/screen")
     public ResponseEntity<ApiResponse<AiInferenceResponse>> screenAssessment(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable("id") Long id) {
-        AiInferenceResponse response = assessmentService.screenAssessment(userDetails.getUsername(), id, null);
+            @PathVariable("id") Long id,
+            @Valid @RequestBody(required = false) com.nutrivision.dto.request.ScreeningRequest request) {
+        AiInferenceResponse response = assessmentService.screenAssessment(userDetails.getUsername(), id, null, request == null ? null : request.getSymptoms());
         return ResponseEntity.ok(ApiResponse.success(response, "Preliminary AI screening evaluation completed"));
     }
 
@@ -156,9 +157,9 @@ public class AssessmentController {
     public ResponseEntity<ApiResponse<AiInferenceResponse>> screenAssessmentImage(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("id") Long id,
-            @PathVariable("imageId") Long imageId) {
-        AiInferenceResponse response = assessmentService.screenAssessment(userDetails.getUsername(), id, imageId);
+            @PathVariable("imageId") Long imageId,
+            @Valid @RequestBody(required = false) com.nutrivision.dto.request.ScreeningRequest request) {
+        AiInferenceResponse response = assessmentService.screenAssessment(userDetails.getUsername(), id, imageId, request == null ? null : request.getSymptoms());
         return ResponseEntity.ok(ApiResponse.success(response, "Preliminary AI screening evaluation completed"));
     }
 }
-

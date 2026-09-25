@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:localpreview;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+app:
+  admin:
+    bootstrap:
+      enabled: false
+  storage:
+    upload-dir: ./target/local-preview-uploads
+  ai-service:
+    url: http://127.0.0.1:8000/api/ai

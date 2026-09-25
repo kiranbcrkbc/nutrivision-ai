@@ -1,5 +1,5 @@
 """
-NutriVision AI - Inference Service
+Vitamin Deficiency - Inference Service
 Orchestrates image quality evaluation, model readiness checks, and screening inference.
 Enforces medical safety: never generates fake medical diagnoses or random predictions.
 """
@@ -13,6 +13,7 @@ from app.schemas.quality import ImageQualityResponse
 from app.schemas.inference import InferenceResponse, PredictionItem
 from app.services.quality_service import evaluate_image_quality
 from app.services.model_service import model_service
+from app.services.content_service import content_service
 
 
 def run_screening_inference(
@@ -28,6 +29,9 @@ def run_screening_inference(
     5. Returns structured JSON with safe preliminary screening phrasing.
     """
     normalized_body_part = (target_body_part or "GENERAL").upper().strip()
+    if normalized_body_part not in {"EYES", "TONGUE", "NAILS", "LIPS", "SKIN", "HAIR", "FACE"}:
+        return InferenceResponse(status="INVALID_BODY_PART", inferenceStatus="INVALID_BODY_PART",
+                                 message="Select eyes, tongue, nails, lips, skin, or hair before submitting.")
 
     # Step 1: Quality Evaluation
     quality_res: ImageQualityResponse = evaluate_image_quality(image_bytes)
@@ -45,6 +49,26 @@ def run_screening_inference(
             topPrediction=None,
             explainabilityStatus="EXPLAINABILITY_NOT_AVAILABLE",
             message=quality_res.rejectionReason or "Image quality does not meet technical sharpness or illumination requirements."
+        )
+
+    content = content_service.check(image_bytes, normalized_body_part)
+    if content["status"] != "ACCEPTED":
+        state = "IMAGE_REJECTED" if content["status"] == "REJECTED" else "CONTENT_CHECK_UNAVAILABLE"
+        return InferenceResponse(status=state, inferenceStatus=state,
+                                 targetBodyPart=normalized_body_part, qualityEvaluation=quality_res,
+                                 contentEvaluation=content, message=content["message"])
+
+    # Photo suitability is separate from medical validity.
+    if not model_service.is_screening_validated():
+        return InferenceResponse(
+            status="SCREENING_UNAVAILABLE", modelAvailable=False,
+            modelStatus="NOT_VALIDATED", inferenceStatus="SCREENING_UNAVAILABLE",
+            targetBodyPart=normalized_body_part, qualityEvaluation=quality_res,
+            contentEvaluation=content,
+            predictions=[], topPrediction=None,
+            message="Your photo passed the quality and body-area checks. Vitamin deficiencies cannot be "
+                    "reliably determined by this app from a photo. Your record is saved; explore food guidance "
+                    "or discuss your symptoms and any needed tests with a clinician."
         )
 
     # Step 3: Check Model Availability
@@ -97,6 +121,5 @@ def run_screening_inference(
             predictions=[],
             topPrediction=None,
             explainabilityStatus="EXPLAINABILITY_NOT_AVAILABLE",
-            message=f"Inference execution failed: {str(e)}"
+            message="Photo analysis could not be completed. Please try again later."
         )
-

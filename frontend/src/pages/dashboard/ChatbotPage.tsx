@@ -32,7 +32,7 @@ export const ChatbotPage: React.FC = () => {
     {
       id: 'welcome',
       sender: 'BOT',
-      text: "Hello! I am your NutriVision AI Assistant. I can help explain vitamin functions, decode visible symptoms (such as a sore tongue or spoon nails) into plain English, suggest everyday Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nPlease remember that I provide educational information only, not clinical diagnoses.",
+      text: "Hello! I am your Vitamin Deficiency Assistant. I can help explain vitamin functions, decode visible symptoms (such as a sore tongue or spoon nails) into plain English, suggest everyday Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nPlease remember that I provide educational information only, not clinical diagnoses.",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       suggestions: [
         'What is Vitamin B12?',
@@ -120,8 +120,8 @@ export const ChatbotPage: React.FC = () => {
     <div className="space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-8rem)]">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="AI Nutrition Assistant"
-          subtitle="Ask questions about symptoms, vitamin functions, dietary food sources, or finding healthcare in Bengaluru."
+          title="Nutrition questions"
+          subtitle="A rule-based educational guide to vitamins, foods, terminology, and finding care. It cannot diagnose or interpret photos."
         />
         <Button
           variant="ghost"

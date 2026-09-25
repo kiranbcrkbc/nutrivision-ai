@@ -1,5 +1,5 @@
 """
-NutriVision AI - AI/ML Microservice Entry Point
+Vitamin Deficiency - AI/ML Microservice Entry Point
 FastAPI service providing image quality analysis, deep learning inference, and Grad-CAM explainability.
 """
 
@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import health, quality, inference
 
 app = FastAPI(
-    title="NutriVision AI - Image Quality & AI Engine",
+    title="Vitamin Deficiency - Image Quality & AI Engine",
     description="Microservice for image quality evaluation, deficiency classification, and Grad-CAM explainability.",
     version="1.0.0"
 )

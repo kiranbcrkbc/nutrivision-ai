@@ -106,10 +106,10 @@ public class AiInferenceClient {
 
         } catch (ResourceAccessException e) {
             log.warn("AI inference microservice is unreachable at {}: {}", endpoint, e.getMessage());
-            return AiInferenceResponse.fallback("AI inference microservice is unreachable. Quality check was completed.", targetBodyPart);
+            return AiInferenceResponse.fallback("The photo analysis service could not be reached. No prediction has been made.", targetBodyPart);
         } catch (RestClientException e) {
             log.error("Error communicating with AI inference service: {}", e.getMessage(), e);
-            return AiInferenceResponse.fallback("Error during AI inference communication: " + e.getMessage(), targetBodyPart);
+            return AiInferenceResponse.fallback("The photo analysis service is temporarily unavailable. Please try again later.", targetBodyPart);
         } catch (Exception e) {
             log.error("Unexpected error during AI screening: {}", e.getMessage(), e);
             return AiInferenceResponse.fallback("Unexpected error during preliminary screening.", targetBodyPart);
@@ -146,7 +146,7 @@ public class AiInferenceClient {
 
         Map<String, Object> downStatus = new HashMap<>();
         downStatus.put("status", "DOWN");
-        downStatus.put("service", "NutriVision AI Service");
+        downStatus.put("service", "Vitamin Deficiency Service");
         downStatus.put("modelAvailable", false);
         downStatus.put("inferenceModel", "MODEL_NOT_AVAILABLE");
         downStatus.put("message", "AI microservice is currently unreachable.");

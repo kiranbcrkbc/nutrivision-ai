@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class AssessmentDto {
+    private AiInferenceResponse screeningResult;
+    public AiInferenceResponse getScreeningResult() { return screeningResult; }
+    public void setScreeningResult(AiInferenceResponse value) { screeningResult = value; }
     private Long assessmentId;
     private Long userId;
     private String userFullName;

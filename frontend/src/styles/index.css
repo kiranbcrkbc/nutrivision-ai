@@ -56,3 +56,11 @@
     background: #475569;
   }
 }
+
+@media print {
+  body:has([data-assessment-report]) * { visibility: hidden; }
+  body:has([data-assessment-report]) [data-assessment-report],
+  body:has([data-assessment-report]) [data-assessment-report] * { visibility: visible; }
+  [data-assessment-report] { position: absolute !important; inset: 0 !important; overflow: visible !important; }
+  [data-assessment-report] article { max-width: none !important; }
+}

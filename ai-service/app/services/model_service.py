@@ -1,5 +1,5 @@
 """
-NutriVision AI - Model Registry & Lifecycle Service
+Vitamin Deficiency - Model Registry & Lifecycle Service
 Manages deep learning model discovery, loading, and runtime availability state.
 Auto-loads ONNX models and metadata from models/trained/.
 """
@@ -136,6 +136,12 @@ class ModelService:
     def is_model_ready(self) -> bool:
         return self.model_status == "MODEL_READY" and self.active_model is not None
 
+    def is_screening_validated(self) -> bool:
+        # The bundled classifier was trained on generated drawings, not patient
+        # photographs. Loading weights is not evidence of clinical validity.
+        # No production photo classifier/anatomy validator has been integrated.
+        return False
+
     def get_metadata(self) -> Dict[str, Any]:
         return {
             "status": self.model_status,
@@ -143,7 +149,9 @@ class ModelService:
             "model_version": self.active_model_version,
             "framework": self.model_framework,
             "classes": self.class_labels,
-            "evaluation_metrics": self.model_metadata.get("evaluation_metrics")
+            "screening_validated": self.is_screening_validated(),
+            "evaluation_scope": "Synthetic demonstration images only; not validated on patient photographs",
+            "evaluation_metrics": None
         }
 
     def predict(self, image_bytes: bytes, target_body_part: Optional[str] = None) -> List[PredictionItem]:
@@ -153,6 +161,8 @@ class ModelService:
         """
         if not self.is_model_ready():
             raise RuntimeError("Model is not ready for inference.")
+        if not self.is_screening_validated():
+            raise RuntimeError("This demonstration model is not validated for photo screening.")
 
         # 1. Preprocess image: Resize to 224x224 RGB
         pil_img = Image.open(io.BytesIO(image_bytes)).convert("RGB").resize((224, 224), Image.Resampling.BILINEAR)

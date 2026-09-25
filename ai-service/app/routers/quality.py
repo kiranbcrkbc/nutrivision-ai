@@ -1,11 +1,12 @@
 """
-NutriVision AI - Image Quality Router
+Vitamin Deficiency - Image Quality Router
 Exposes endpoints for image quality analysis.
 """
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, status
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, status
 from app.schemas.quality import ImageQualityResponse
 from app.services.quality_service import evaluate_image_quality
+from app.services.content_service import content_service
 
 router = APIRouter(tags=["Image Quality Engine"])
 
@@ -13,7 +14,7 @@ router = APIRouter(tags=["Image Quality Engine"])
 @router.post("/analyze-image", response_model=ImageQualityResponse)
 @router.post("/quality/check", response_model=ImageQualityResponse)
 @router.post("/api/quality/check", response_model=ImageQualityResponse)
-async def check_image_quality(file: UploadFile = File(...)) -> ImageQualityResponse:
+async def check_image_quality(file: UploadFile = File(...), target_body_part: str = Form("")) -> ImageQualityResponse:
     """
     Accepts an uploaded image via multipart/form-data and evaluates sharpness & brightness.
     Returns structured JSON with blur score, brightness score, quality status, and feedback.
@@ -25,16 +26,24 @@ async def check_image_quality(file: UploadFile = File(...)) -> ImageQualityRespo
         )
 
     try:
-        image_bytes = await file.read()
+        image_bytes = await file.read(10 * 1024 * 1024 + 1)
+        if len(image_bytes) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Please upload an image smaller than 10 MB.")
         if not image_bytes or len(image_bytes) == 0:
             return evaluate_image_quality(b"")
 
-        return evaluate_image_quality(image_bytes)
+        result = evaluate_image_quality(image_bytes)
+        if result.qualityStatus != "REJECTED":
+            content = content_service.check(image_bytes, target_body_part)
+            if content["status"] != "ACCEPTED":
+                result.qualityStatus = "REJECTED" if content["status"] in {"REJECTED", "INVALID_BODY_PART"} else "PENDING"
+                result.rejectionReason = content["message"]
+        return result
 
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Failed to process image: {str(e)}"
+            detail="Unable to process this photograph. Please try a different image."
         )

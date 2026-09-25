@@ -15,7 +15,7 @@ export const PublicLayout: React.FC = () => {
     { name: t('nav.home', 'Home'), path: '/' },
     { name: t('nav.howItWorks', 'How It Works'), path: '/how-it-works' },
     { name: t('nav.about', 'About'), path: '/about' },
-    { name: 'Try Demo 🎓', path: '/demo' },
+
     { name: 'Find a Doctor', path: '/doctors' },
   ];
 
@@ -33,16 +33,16 @@ export const PublicLayout: React.FC = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg text-slate-900 dark:text-slate-100 tracking-tight leading-none">
-                NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+                Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
               </span>
               <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-                PRELIMINARY HEALTH ENGINE
+                NUTRITION & WELLBEING
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -59,8 +59,8 @@ export const PublicLayout: React.FC = () => {
           </nav>
 
           {/* Right Header Actions */}
-          <div className="hidden md:flex items-center gap-2.5">
-            <LanguageSelector />
+          <div className="hidden xl:flex items-center gap-2.5">
+
             <ThemeToggle />
             <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
             <Link to="/login">
@@ -76,8 +76,8 @@ export const PublicLayout: React.FC = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-1.5">
-            <LanguageSelector />
+          <div className="flex xl:hidden items-center gap-1.5">
+
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -91,7 +91,7 @@ export const PublicLayout: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
+          <div className="xl:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -137,15 +137,15 @@ export const PublicLayout: React.FC = () => {
                   <Activity className="w-5 h-5" />
                 </div>
                 <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
-                  NutriVision <span className="text-health-600 dark:text-health-400">AI</span>
+                  Vitamin <span className="text-health-600 dark:text-health-400">Deficiency</span>
                 </span>
               </div>
               <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-                An educational prototype providing AI-assisted preliminary vitamin deficiency screening and personalized nutrition recommendations based on visual features and self-reported symptoms.
+                Your space for photo and symptom records, everyday food guidance, and informed conversations about nutrition.
               </p>
               <div className="mt-4 flex items-center gap-2 text-xs text-health-700 dark:text-health-400 font-medium">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Educational College Prototype • Non-Diagnostic System</span>
+                <span>Nutrition education · Not a diagnosis</span>
               </div>
             </div>
 
@@ -158,7 +158,6 @@ export const PublicLayout: React.FC = () => {
                 <li><Link to="/how-it-works" className="hover:text-health-600 dark:hover:text-health-400">How It Works</Link></li>
                 <li><Link to="/about" className="hover:text-health-600 dark:hover:text-health-400">About the Project</Link></li>
                 <li><Link to="/disclaimer" className="hover:text-health-600 dark:hover:text-health-400">Medical Disclaimer</Link></li>
-                <li><Link to="/dev/status" className="hover:text-health-600 dark:hover:text-health-400">Service Status (Dev)</Link></li>
               </ul>
             </div>
 
@@ -173,11 +172,11 @@ export const PublicLayout: React.FC = () => {
           </div>
 
           <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 dark:text-slate-500">
-            <p>© {new Date().getFullYear()} NutriVision AI Project. Built with Free & Open Source Technologies.</p>
+            <p>© {new Date().getFullYear()} Vitamin Deficiency</p>
             <div className="flex items-center gap-4">
               <Link to="/disclaimer" className="hover:underline">Medical Disclaimer</Link>
               <span>•</span>
-              <Link to="/about" className="hover:underline">Ethical AI Policies</Link>
+              <Link to="/about" className="hover:underline">About</Link>
             </div>
           </div>
         </div>

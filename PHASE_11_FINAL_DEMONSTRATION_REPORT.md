@@ -1,3 +1,5 @@
+> Historical report from the previous implementation. Its success/accuracy claims do not establish real-photo validity or current production readiness. See docs/REPAIR_STATUS.md for the current audit.
+
 # Phase 11 — College Demonstration, Final Project Polish & Viva Readiness Final Report
 
 **Project Title:** NutriVision AI — AI-Based Vitamin Deficiency Identification and Nutrition Recommendation System  

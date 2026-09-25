@@ -51,7 +51,7 @@ export const DevStatusPage: React.FC = () => {
     <div className="space-y-8">
       <PageHeader
         title="System & Service Diagnostics"
-        subtitle="Live development health telemetry across all NutriVision AI architectural layers."
+        subtitle="Live development health telemetry across all Vitamin Deficiency architectural layers."
         actions={
           <Button
             variant="outline"

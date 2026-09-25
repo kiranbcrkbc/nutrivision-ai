@@ -14,6 +14,13 @@ public class Assessment {
     @Column(name = "assessment_id")
     private Long assessmentId;
 
+    @Lob
+    @Column(name = "screening_result_json", columnDefinition = "LONGTEXT")
+    private String screeningResultJson;
+
+    public String getScreeningResultJson() { return screeningResultJson; }
+    public void setScreeningResultJson(String value) { screeningResultJson = value; }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

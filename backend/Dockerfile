@@ -28,4 +28,4 @@ ENV APP_STORAGE_UPLOAD_DIR=/app/uploads/assessments
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "if [ \"$SPRING_DATASOURCE_USERNAME\" = \"4R11HbsY67bXvSg.root\" ]; then export SPRING_DATASOURCE_USERNAME=\"2vsoFfJUyF5U1VJ.root\"; fi && java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT:-8080} -Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME:-2vsoFfJUyF5U1VJ.root} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "exec java -XX:MaxRAMPercentage=65 -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT:-8080} -jar app.jar"]

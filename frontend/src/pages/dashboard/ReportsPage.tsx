@@ -58,68 +58,12 @@ export const ReportsPage: React.FC = () => {
       setSelectedAssessment(fullAssessment);
       setSelectedImages(images);
 
-      // Fetch or synthesize nutrition recommendation based on category
-      let category = 'Iron_Deficiency';
-      if (summary.targetBodyPart === 'EYES') category = 'Vitamin_A_Deficiency';
-      else if (summary.targetBodyPart === 'TONGUE') category = 'Vitamin_B12_Deficiency';
-      else if (summary.targetBodyPart === 'SKIN') category = 'Vitamin_C_Deficiency';
-      else if (summary.targetBodyPart === 'NAILS') category = 'Iron_Deficiency';
-      else if (summary.targetBodyPart === 'HAIR') category = 'Zinc_Deficiency';
-
-      try {
-        const nutData = await nutritionService.getRecommendations(category);
-        setSelectedNutrition(nutData);
-      } catch (e) {
-        console.warn('Could not load nutrition guidance for report:', e);
-      }
-
-      // Build inference response if available
-      const fakeInference: InferenceResponse = {
-        status: 'SUCCESS',
-        modelAvailable: true,
-        modelStatus: 'Loaded & Ready (ONNX MobileNetV2)',
-        inferenceStatus: 'SUCCESS',
-        modelName: 'MobileNetV2 NutriVision AI',
-        modelVersion: 'v1.0.0',
-        targetBodyPart: summary.targetBodyPart,
-        qualityEvaluation: {
-          qualityStatus: images.length > 0 && images[0].qualityStatus ? images[0].qualityStatus : 'PASSED',
-          blurScore: images.length > 0 && images[0].blurScore ? images[0].blurScore : 128.4,
-          brightnessScore: images.length > 0 && images[0].brightnessScore ? images[0].brightnessScore : 130.2,
-        },
-        predictions: [
-          {
-            rank: 1,
-            deficiencyCategory: category,
-            modelConfidence: 0.962,
-            confidencePercentage: '96.2%',
-            possiblePatternDescription: `Visual pattern corresponding to ${category.replace(/_/g, ' ')} detected.`
-          },
-          {
-            rank: 2,
-            deficiencyCategory: 'Healthy_Normal',
-            modelConfidence: 0.028,
-            confidencePercentage: '2.8%',
-            possiblePatternDescription: 'Normal morphological tissue characteristics without clear deficiency.'
-          },
-          {
-            rank: 3,
-            deficiencyCategory: 'Zinc_Deficiency',
-            modelConfidence: 0.010,
-            confidencePercentage: '1.0%',
-            possiblePatternDescription: 'Secondary potential classification candidate.'
-          }
-        ],
-        topPrediction: {
-          rank: 1,
-          deficiencyCategory: category,
-          modelConfidence: 0.962,
-          confidencePercentage: '96.2%',
-          possiblePatternDescription: `Visual pattern corresponding to ${category.replace(/_/g, ' ')} detected.`
-        }
-      };
-
-      setSelectedInference(fakeInference);
+      // Reports must use the recorded outcome, never an invented prediction.
+      const outcome = fullAssessment.screeningResult || null;
+      setSelectedInference(outcome);
+      setSelectedNutrition(null);
+      const category = outcome?.status === 'SUCCESS' ? outcome.topPrediction?.categoryCode : undefined;
+      if (category) setSelectedNutrition(await nutritionService.getRecommendations(category));
       setIsReportOpen(true);
     } catch (err: any) {
       showToast.error('Report Error', 'Could not compile assessment report.');
@@ -132,7 +76,7 @@ export const ReportsPage: React.FC = () => {
     <div className="space-y-8">
       <PageHeader
         title="Assessment Reports & Summaries"
-        subtitle="Generate, view, and print official structured clinical screening reports and dietary guidance to share with healthcare professionals."
+        subtitle="Review and print saved assessment outcomes and self-reported concerns. These records are not clinical or laboratory reports."
       />
 
       <MedicalDisclaimer variant="banner" />
@@ -210,7 +154,7 @@ export const ReportsPage: React.FC = () => {
                     onClick={() => handleOpenReport(a)}
                     leftIcon={<Eye className="w-4 h-4" />}
                   >
-                    View Official Report
+                    View saved record
                   </Button>
                   <Link to={`/assessment/${a.assessmentId}`}>
                     <Button variant="outline" size="sm">

@@ -1,3 +1,5 @@
+> Historical report from the previous implementation. Its success/accuracy claims do not establish real-photo validity or current production readiness. See docs/REPAIR_STATUS.md for the current audit.
+
 # NutriVision AI — Phase 8 Model Evaluation & Performance Report
 
 **Model Name:** NutriVision AI MobileNetV2 Deficiency Classifier  

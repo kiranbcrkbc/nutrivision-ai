@@ -28,10 +28,10 @@ public class DataInitializer implements CommandLineRunner {
     @Value("${app.admin.bootstrap.email:admin@nutrivision.ai}")
     private String adminEmail;
 
-    @Value("${app.admin.bootstrap.password:Admin@NutriVision2026}")
+    @Value("${app.admin.bootstrap.password:}")
     private String adminPassword;
 
-    @Value("${app.admin.bootstrap.enabled:true}")
+    @Value("${app.admin.bootstrap.enabled:false}")
     private boolean bootstrapEnabled;
 
     public DataInitializer(RoleRepository roleRepository,
@@ -46,7 +46,19 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         initializeRoles();
+        // Revoke only the publicly documented legacy bootstrap credential.
+        // Accounts whose owner already changed that password are unaffected.
+        userRepository.findByEmail("admin@nutrivision.ai").ifPresent(user -> {
+            if (passwordEncoder.matches("Admin@NutriVision2026", user.getPasswordHash())) {
+                user.setIsActive(false);
+                userRepository.save(user);
+                logger.warn("Disabled the legacy administrator credential; configure a private administrator account before use.");
+            }
+        });
         if (bootstrapEnabled) {
+            if (adminPassword == null || adminPassword.length() < 16) {
+                throw new IllegalStateException("Admin bootstrap requires an explicit strong password of at least 16 characters.");
+            }
             initializeAdminUser();
         }
     }

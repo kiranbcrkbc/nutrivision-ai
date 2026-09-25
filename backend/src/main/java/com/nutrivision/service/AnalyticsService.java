@@ -47,12 +47,12 @@ public class AnalyticsService {
         long inProgressAssessments = assessmentRepository.countByUser_UserIdAndStatus(user.getUserId(), AssessmentStatus.IN_PROGRESS)
                 + assessmentRepository.countByUser_UserIdAndStatus(user.getUserId(), AssessmentStatus.DRAFT);
 
-        long totalImages = assessmentImageRepository.count();
+        long totalImages = assessmentImageRepository.countByAssessment_User_UserId(user.getUserId());
 
         // Quality Status Breakdown from real database records
         Map<String, Long> qualityStatusCounts = new LinkedHashMap<>();
         for (QualityStatus status : QualityStatus.values()) {
-            qualityStatusCounts.put(status.name(), assessmentImageRepository.countByQualityStatus(status));
+            qualityStatusCounts.put(status.name(), assessmentImageRepository.countByAssessment_User_UserIdAndQualityStatus(user.getUserId(), status));
         }
 
         // Body Part Distribution from user's assessments
@@ -76,7 +76,7 @@ public class AnalyticsService {
                 "1.0.0",
                 "PyTorch -> ONNX Runtime (CPU)",
                 "FastAPI Microservice (Port 8000)",
-                "OPERATIONAL",
+                "NOT_VALIDATED_FOR_PHOTO_SCREENING",
                 "MobileNetV2 with Inverted Residual Blocks & Linear Bottlenecks",
                 "Synthesized prototype benchmark dataset (900 balanced multi-region samples). Non-clinical prototype."
         );

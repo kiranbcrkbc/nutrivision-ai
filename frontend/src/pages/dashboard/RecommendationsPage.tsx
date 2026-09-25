@@ -28,7 +28,7 @@ import {
 
 export const RecommendationsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialCategory = searchParams.get('category') || 'Iron_Deficiency';
+  const initialCategory = searchParams.get('category') || 'Healthy_Normal';
 
   const [categories, setCategories] = useState<CategoryMetadataDto[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);

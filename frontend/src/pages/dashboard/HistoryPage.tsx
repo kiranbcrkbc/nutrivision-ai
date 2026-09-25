@@ -95,7 +95,7 @@ export const HistoryPage: React.FC = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span>Severity: <strong>{item.severityRiskLevel || 'Pending Review'}</strong></span>
+                    <span>Risk level: <strong>Not assessed</strong></span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />

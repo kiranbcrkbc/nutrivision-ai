@@ -5,7 +5,7 @@ import java.time.Instant;
 public class ApiResponse<T> {
 
     public static final String MEDICAL_DISCLAIMER =
-        "Results provided by NutriVision AI are AI-based preliminary assessments or possible indicators only. " +
+        "Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. " +
         "They are not medically certified diagnoses. Users should consult qualified healthcare professionals for medical diagnosis and treatment.";
 
     private boolean success;
