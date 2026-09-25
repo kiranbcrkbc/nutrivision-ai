@@ -14,6 +14,15 @@ The supplied screenshot shows a saved hand photo with `Photo check unavailable`.
 
 ## Coverage matrix
 
+Verified release: merge `ca2205e` (PR #5), deployed to frontend, backend and AI on 25 September 2026. All three Render deployments reported live. Backend logs show the 90,000 ms timeout; live AI health reports photo checking READY and medical model NOT_VALIDATED.
+
+- 79 Python image-service tests and 36 Java backend tests passed; frontend lint/build passed.
+- 20 complete live API workflow checks passed again (QA record 240001).
+- 26 additional live checks passed: mirrored WebP burgers for six body areas, same-photo retry, no duplicate uploads, seven vegan category filters, and HTTP 409 when requesting image-specific diet without a prediction.
+- Eight direct live AI checks passed (readiness, six burger/body-area cases, valid eye without a diagnosis).
+- Browser: tongue upload accepted, symptom selected, review acknowledged, record saved, clinician link followed, specialty/neighbourhood search URL verified, and saved report reopened with the exact symptom/photo (QA record 240002). No PDF file was exported in this pass.
+- No new defects were observed in those cases. Hardware camera access, every skin tone/body-area variation, all browsers, sustained load, and a real idle-to-awake production cycle were not exhaustively tested. Slow response, outage/recovery and concurrent health handling were tested with controlled local regressions.
+
 | Layer | Cases |
 |---|---|
 | Input validation | Empty/corrupt data, supported JPEG/PNG/WebP, unsupported format, small resolution, oversized upload, invalid body area |
