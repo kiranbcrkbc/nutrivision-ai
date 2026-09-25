@@ -26,4 +26,35 @@ class ChatIntentRegressionTest {
         assertEquals(intent, result.getIntentCategory());
         assertFalse(result.getReply().isBlank());
     }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+        "Okay, thank you for that one. How much water do I drink every day? | HYDRATION",
+        "How much fluid should I drink? | HYDRATION",
+        "Does tea count? | HYDRATION_DRINKS",
+        "I have kidney disease. How much water? | HYDRATION_RESTRICTION",
+        "What foods contain protein? | PROTEIN_FOODS",
+        "When should I see a doctor? | WHEN_TO_SEE_DOCTOR",
+        "What dose of vitamin D should I take? | SUPPLEMENT_SAFETY",
+        "Find a doctor near me | DOCTOR_REFERRAL",
+        "Thanks! | ACKNOWLEDGEMENT",
+        "hi | GREETING",
+        "Is this working? | GENERAL_ASSISTANCE"
+    })
+    void handlesRealQuestionsWithoutGenericEcho(String question, String intent) {
+        var result = service.processUserMessage("test@example.com", new ChatMessageRequest(question, null));
+        assertEquals(intent, result.getIntentCategory());
+        assertFalse(result.getReply().contains("I understand you are asking"));
+    }
+
+    @org.junit.jupiter.api.Test
+    void followUpUsesTopicButExplicitNewQuestionOverridesIt() {
+        var request = new ChatMessageRequest("And foods?", null);
+        request.setPreviousTopic("VITAMIN_B12_EXPLANATION");
+        assertEquals("VITAMIN_B12_FOODS", service.processUserMessage("qa@example.com", request).getIntentCategory());
+        request.setMessage("How much water should I drink?");
+        assertEquals("HYDRATION", service.processUserMessage("qa@example.com", request).getIntentCategory());
+        request.setMessage("I have chest pain");
+        assertTrue(service.processUserMessage("qa@example.com", request).isEmergency());
+    }
 }

@@ -24,7 +24,7 @@ public class ChatbotService {
     private final UserRepository userRepository;
 
     private static final String DEFAULT_DISCLAIMER =
-            "Vitamin Deficiency provides educational information and preliminary visual screening indications only. It is not a clinical medical diagnosis. Please consult a qualified healthcare provider for clinical evaluation.";
+            "Vitamin Deficiency provides general educational information only. It is not a clinical medical diagnosis. Please consult a qualified healthcare provider for clinical evaluation.";
 
     public ChatbotService(AssessmentRepository assessmentRepository, UserRepository userRepository) {
         this.assessmentRepository = assessmentRepository;
@@ -33,7 +33,8 @@ public class ChatbotService {
 
     @Transactional(readOnly = true)
     public ChatMessageResponse processUserMessage(String userEmail, ChatMessageRequest request) {
-        String msg = (request.getMessage() != null) ? request.getMessage().trim().toLowerCase() : "";
+        String msg = (request.getMessage() != null) ? request.getMessage().trim().toLowerCase(Locale.ROOT) : "";
+        msg = resolveFollowUp(msg, request.getPreviousTopic());
         // Do not log private health questions or account identifiers.
 
         // Emergency detection
@@ -51,7 +52,7 @@ public class ChatbotService {
         if (msg.contains("confirm") || msg.contains("diagnosis") || Pattern.compile("\\bprove\\b").matcher(msg).find() || msg.contains("is this real") || msg.contains("test result")) {
             return new ChatMessageResponse(
                     "NO — Vitamin Deficiency cannot confirm a nutritional deficiency, and no smartphone photo can replace clinical laboratory testing.\n\n" +
-                            "Vitamin Deficiency provides preliminary visual indications to raise awareness about visible signs on the body. A definitive diagnosis requires standard clinical evaluation and laboratory blood tests (such as Serum B12, Serum Ferritin, or 25-OH Vitamin D) ordered by a physician.",
+                            "This app checks photo suitability and saves your observations; it does not predict a vitamin deficiency. A definitive diagnosis requires standard clinical evaluation and laboratory blood tests (such as Serum B12, Serum Ferritin, or 25-OH Vitamin D) ordered by a physician.",
                     "DIAGNOSTIC_LIMITATION",
                     Arrays.asList("When should I see a doctor?", "Find a doctor in Bengaluru", "What foods contain B12?"),
                     DEFAULT_DISCLAIMER,
@@ -61,6 +62,52 @@ public class ChatbotService {
 
         if (msg.contains("child") || msg.contains("children") || msg.contains("baby")) {
             return new ChatMessageResponse("This prototype has not been validated for children. A parent or guardian should discuss a child's symptoms and nutrition with a paediatrician. Do not use photo results or adult supplement doses for a child.", "CHILD_SAFETY", List.of("Find a doctor in Bengaluru"), DEFAULT_DISCLAIMER, false);
+        }
+        // When to see a doctor
+        if (msg.contains("when should i see") || msg.contains("should i see a doctor") || msg.contains("need a doctor") || msg.contains("serious")) {
+            return new ChatMessageResponse(
+                    "You should seek an in-person consultation with a qualified doctor if:\n\n" +
+                            "1. Your visible signs (such as a sore tongue, cracking lips, or skin changes) persist for more than 10-14 days.\n" +
+                            "2. You experience persistent unexplained fatigue, weakness, dizziness, or rapid heartbeat.\n" +
+                            "3. You have numbness, tingling, or 'pins and needles' sensations in your hands or feet.\n" +
+                            "4. You have digestive problems or malabsorption history.\n" +
+                            "5. You are pregnant, nursing, or planning a strict dietary change.\n\n" +
+                            "A doctor will conduct a clinical examination and order routine blood tests to check your actual vitamin levels.",
+                    "WHEN_TO_SEE_DOCTOR",
+                    Arrays.asList("Find a doctor in Bengaluru", "Can this confirm deficiency?", "What foods contain B12?"),
+                    DEFAULT_DISCLAIMER,
+                    false
+            );
+        }
+
+        // Supplements questions
+        if (msg.contains("supplement") || msg.contains("tablet") || msg.contains("pill") || msg.contains("capsule") || msg.contains("multivitamin") || msg.contains("dose") || msg.contains("dosage")) {
+            return new ChatMessageResponse(
+                    "Regarding vitamins and dietary supplements:\n\n" +
+                            "• Safety First: Vitamin Deficiency does not recommend or prescribe specific supplement dosages or pharmaceutical medications. High-dose fat-soluble vitamins (such as Vitamin A or D) or high-dose iron can cause toxicity if taken without clinical monitoring.\n" +
+                            "• Dietary First: We always recommend obtaining essential vitamins from wholesome, balanced everyday foods whenever possible.\n" +
+                            "• Clinical Guidance: If a deficiency is confirmed by a blood test, your doctor or registered dietitian will prescribe the exact safe dosage and formulation suited to your health profile.",
+                    "SUPPLEMENT_SAFETY",
+                    Arrays.asList("What foods contain B12?", "What foods contain Iron?", "Find a doctor in Bengaluru"),
+                    DEFAULT_DISCLAIMER,
+                    false
+            );
+        }
+
+        if (Pattern.compile("\\b(water|hydration|hydrate|fluids?|thirsty|tea|coffee)\\b").matcher(msg).find()) {
+            if (msg.contains("kidney") || msg.contains("heart failure") || msg.contains("fluid restriction")) {
+                return answer("If you have kidney disease, heart failure, or a prescribed fluid restriction, ask your treating clinician for your daily fluid limit. A general water target may be unsuitable for you.", "HYDRATION_RESTRICTION", "Find a doctor in Bengaluru");
+            }
+            if (msg.contains("tea") || msg.contains("coffee") || msg.contains("count")) {
+                return answer("Water is a good everyday choice. Milk and sugar-free drinks, including tea and coffee, also count towards fluid intake. Choose water more often and limit sugary drinks.\n\nSource: https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/water-drinks-nutrition/", "HYDRATION_DRINKS", "How much water should I drink?");
+            }
+            return answer("For most adults, 6 to 8 cups or glasses of fluid a day is a general starting point, not a fixed prescription. Spread drinks through the day; you may need more in hot weather or during activity. Water, milk and other drinks count. If a clinician has restricted your fluids, follow that advice.\n\nSource: https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/water-drinks-nutrition/", "HYDRATION", "Does tea count?", "What is a balanced diet?");
+        }
+        if (msg.contains("protein")) {
+            return answer("Protein food sources include beans, lentils, chickpeas, tofu, nuts, eggs, fish and meat. For a plant-based meal, try dal or chickpeas with rice or roti and vegetables. Your personal protein requirement depends on your health and activity; this chat cannot prescribe an individual target.\n\nSource: https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/", "PROTEIN_FOODS", "What is a balanced diet?", "What foods contain B12?");
+        }
+        if (msg.matches("(?:ok(?:ay)?[,! .]*)?(?:thanks|thank you)(?: very much)?[!. ]*")) {
+            return answer("You are welcome. What would you like to explore next?", "ACKNOWLEDGEMENT", "How much water should I drink?", "Protein food sources");
         }
         if (msg.contains("vitamin d") || msg.contains("cholecalciferol")) {
             String answer;
@@ -285,45 +332,9 @@ public class ChatbotService {
                 msg.contains("bangalore") || msg.contains("specialist") || msg.contains("nutritionist") || msg.contains("dietitian") ||
                 msg.contains("near me") || msg.contains("where to go")) {
             return new ChatMessageResponse(
-                    "You can find verified healthcare facilities and clinics directly in our 'Find a Doctor' section!\n\n" +
-                            "In Bengaluru, you can consult:\n" +
-                            "• Multispecialty Hospitals: Manipal Hospital (Old Airport Rd / Whitefield), Apollo Hospitals (Jayanagar), Fortis (Bannerghatta Rd), Aster CMI (Hebbal).\n" +
-                            "• Clinical Nutrition Clinics: Qua Nutrition Clinic (Indiranagar / Koramangala).\n" +
-                            "• Diagnostic Labs: Dr. Lal PathLabs, Apollo Clinics across Bengaluru for complete blood counts and vitamin assays.\n\n" +
-                            "Click below to browse verified locations, get phone numbers, and open directions in Google Maps.",
+                    "Open Find a Doctor to search for a primary-care doctor or dietitian in Bengaluru, optionally by neighbourhood. The page opens Google Maps results; check credentials, opening hours and availability directly with the clinic. These listings are not individually verified by this app.",
                     "DOCTOR_REFERRAL",
                     Arrays.asList("Go to Find a Doctor", "When should I see a doctor?", "What did my assessment show?"),
-                    DEFAULT_DISCLAIMER,
-                    false
-            );
-        }
-
-        // When to see a doctor
-        if (msg.contains("when should i see") || msg.contains("should i see a doctor") || msg.contains("need a doctor") || msg.contains("serious")) {
-            return new ChatMessageResponse(
-                    "You should seek an in-person consultation with a qualified doctor if:\n\n" +
-                            "1. Your visible signs (such as a sore tongue, cracking lips, or skin changes) persist for more than 10-14 days.\n" +
-                            "2. You experience persistent unexplained fatigue, weakness, dizziness, or rapid heartbeat.\n" +
-                            "3. You have numbness, tingling, or 'pins and needles' sensations in your hands or feet.\n" +
-                            "4. You have digestive problems or malabsorption history.\n" +
-                            "5. You are pregnant, nursing, or planning a strict dietary change.\n\n" +
-                            "A doctor will conduct a clinical examination and order routine blood tests to check your actual vitamin levels.",
-                    "WHEN_TO_SEE_DOCTOR",
-                    Arrays.asList("Find a doctor in Bengaluru", "Can this confirm deficiency?", "What foods contain B12?"),
-                    DEFAULT_DISCLAIMER,
-                    false
-            );
-        }
-
-        // Supplements questions
-        if (msg.contains("supplement") || msg.contains("tablet") || msg.contains("pill") || msg.contains("capsule") || msg.contains("multivitamin") || msg.contains("dose") || msg.contains("dosage")) {
-            return new ChatMessageResponse(
-                    "Regarding vitamins and dietary supplements:\n\n" +
-                            "• Safety First: Vitamin Deficiency does not recommend or prescribe specific supplement dosages or pharmaceutical medications. High-dose fat-soluble vitamins (such as Vitamin A or D) or high-dose iron can cause toxicity if taken without clinical monitoring.\n" +
-                            "• Dietary First: We always recommend obtaining essential vitamins from wholesome, balanced everyday foods whenever possible.\n" +
-                            "• Clinical Guidance: If a deficiency is confirmed by a blood test, your doctor or registered dietitian will prescribe the exact safe dosage and formulation suited to your health profile.",
-                    "SUPPLEMENT_SAFETY",
-                    Arrays.asList("What foods contain B12?", "What foods contain Iron?", "Find a doctor in Bengaluru"),
                     DEFAULT_DISCLAIMER,
                     false
             );
@@ -332,11 +343,7 @@ public class ChatbotService {
         // Confidence and Image Result questions
         if (msg.contains("confidence") || msg.contains("accuracy") || msg.contains("how accurate") || msg.contains("what does confidence mean")) {
             return new ChatMessageResponse(
-                    "In Vitamin Deficiency, 'Confidence' reflects how strongly the visual pattern in your photo matches categories in the training dataset. The bundled model was tested only on synthetic drawings, so its scores do not establish real-world accuracy:\n\n" +
-                            "• High: The visual markers in your image strongly align with typical patterns for that category.\n" +
-                            "• Moderate: Notable visual features were recognized, but they may be mild or overlap with other normal variations.\n" +
-                            "• Low / Not Clear: The photo is not distinct enough to offer a reliable indication.\n\n" +
-                            "Remember: Confidence indicates visual pattern similarity, NOT a biological proof of deficiency.",
+                    "The current photo check asks whether the image shows the selected body area and has usable lighting and sharpness. It does not measure vitamin levels or provide a clinically validated deficiency probability. A suitable photo is not a diagnosis; use clinical evaluation and appropriate laboratory tests for that.",
                     "CONFIDENCE_EXPLANATION",
                     Arrays.asList("Can this confirm deficiency?", "Check another photo", "What did my assessment show?"),
                     DEFAULT_DISCLAIMER,
@@ -363,7 +370,7 @@ public class ChatbotService {
         }
 
         // General greeting or fallback
-        if (msg.contains("hello") || msg.contains("hi") || msg.contains("hey") || msg.contains("good morning") || msg.contains("good evening")) {
+        if (msg.matches("(?:hello|hi|hey|good morning|good evening)[!. ]*")) {
             return new ChatMessageResponse(
                     "Hello! I am your Vitamin Deficiency Assistant. I can help explain vitamin functions, decode visible symptoms (like sore tongue or spoon nails) into plain English, suggest Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nHow can I help you today?",
                     "GREETING",
@@ -373,20 +380,23 @@ public class ChatbotService {
             );
         }
 
-        // Default intelligent contextual response
-        return new ChatMessageResponse(
-                "I understand you are asking about \"" + request.getMessage() + "\".\n\n" +
-                        "Vitamin Deficiency specializes in educational guidance on preliminary visual signs of nutritional deficiencies (such as Iron, Vitamin B12, Vitamin C, Vitamin A, and Zinc), culinary food recommendations, and healthcare referrals.\n\n" +
-                        "Would you like to know about:\n" +
-                        "1. How specific vitamins function and their food sources\n" +
-                        "2. Explaining a visible sign (e.g., sore tongue, spoon nails, cracked lip corners)\n" +
-                        "3. Reviewing your saved assessments\n" +
-                        "4. Finding a doctor or clinic in Bengaluru?",
-                "GENERAL_ASSISTANCE",
-                Arrays.asList("What is Vitamin B12?", "Foods that contain iron", "Find a doctor in Bengaluru", "When should I see a doctor?"),
-                DEFAULT_DISCLAIMER,
-                false
-        );
+        return answer("I do not have a reliable answer for that question yet. Try a specific nutrition topic, such as water intake, protein foods, vitamin B12, or when to seek care. For a personal health concern, please speak with a clinician.",
+                "GENERAL_ASSISTANCE", "How much water should I drink?", "Protein food sources", "When should I see a doctor?");
+    }
+
+    private ChatMessageResponse answer(String text, String intent, String... suggestions) {
+        return new ChatMessageResponse(text, intent, List.of(suggestions), DEFAULT_DISCLAIMER, false);
+    }
+
+    private String resolveFollowUp(String msg, String previousTopic) {
+        if (previousTopic == null || !msg.matches("(?:and |what about )?(?:foods?|food sources|sources|symptoms|signs|supplements|dosage|how much|tell me more|for vegans|for vegetarians)[?!. ]*")) return msg;
+        String topic = previousTopic.startsWith("VITAMIN_B12") ? "vitamin b12" :
+                previousTopic.startsWith("VITAMIN_D") ? "vitamin d" :
+                previousTopic.startsWith("VITAMIN_A") ? "vitamin a" :
+                previousTopic.startsWith("VITAMIN_C") ? "vitamin c" :
+                previousTopic.startsWith("IRON_") ? "iron" :
+                previousTopic.startsWith("HYDRATION") ? "water" : "";
+        return topic.isEmpty() ? msg : topic + " " + msg;
     }
 
     private boolean isEmergencyQuery(String msg) {
@@ -431,9 +441,9 @@ public class ChatbotService {
                         "• Body Area: " + bodyPart + "\n" +
                         "• Status: " + status + "\n" +
                         "• Number of Photos: " + (latest.getImages() != null ? latest.getImages().size() : 1) + "\n\n" +
-                        "You can review the full visual assessment, food guidance, and export a clean PDF report anytime under 'Assessment History'.",
+                        "You can review your saved observations and open the printable record under 'Assessment History'.",
                 "PREVIOUS_ASSESSMENT_FOUND",
-                Arrays.asList("View Assessment History", "Foods for this deficiency", "Find a doctor in Bengaluru"),
+                Arrays.asList("View Assessment History", "Explore general food guidance", "Find a doctor in Bengaluru"),
                 DEFAULT_DISCLAIMER,
                 false
         );

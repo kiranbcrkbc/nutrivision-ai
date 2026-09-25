@@ -23,12 +23,14 @@ public class AiInferenceClient {
     private static final Logger log = LoggerFactory.getLogger(AiInferenceClient.class);
 
     private final String aiServiceBaseUrl;
+    private final int timeoutMs;
     private final RestTemplate restTemplate;
 
     public AiInferenceClient(
             @Value("${app.ai-service.url:http://localhost:8000}") String aiServiceBaseUrl,
             @Value("${app.ai-service.timeout-ms:15000}") int timeoutMs) {
         this.aiServiceBaseUrl = normalizeUrl(aiServiceBaseUrl);
+        this.timeoutMs = timeoutMs;
 
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(Math.min(timeoutMs, 10000));
@@ -88,11 +90,8 @@ public class AiInferenceClient {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
             log.debug("Dispatching screening inference request to endpoint {}", endpoint);
-            ResponseEntity<AiInferenceResponse> response = restTemplate.postForEntity(
-                    endpoint,
-                    requestEntity,
-                    AiInferenceResponse.class
-            );
+            ResponseEntity<AiInferenceResponse> response = AiPhotoRequest.post(
+                    endpoint, requestEntity, AiInferenceResponse.class, timeoutMs);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 AiInferenceResponse result = response.getBody();

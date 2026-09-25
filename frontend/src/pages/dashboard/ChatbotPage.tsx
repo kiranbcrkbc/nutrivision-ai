@@ -35,7 +35,7 @@ export const ChatbotPage: React.FC = () => {
       text: "Hello! I am your Vitamin Deficiency Assistant. I can help explain vitamin functions, decode visible symptoms (such as a sore tongue or spoon nails) into plain English, suggest everyday Indian food sources, or help you locate a nearby doctor in Bengaluru.\n\nPlease remember that I provide educational information only, not clinical diagnoses.",
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       suggestions: [
-        'What is Vitamin B12?',
+        'How much water should I drink?',
         'What did my previous assessment show?',
         'Foods that contain iron',
         'I am vegetarian',
@@ -44,6 +44,7 @@ export const ChatbotPage: React.FC = () => {
     },
   ]);
 
+  const topicRef = useRef<string | undefined>(undefined);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,8 @@ export const ChatbotPage: React.FC = () => {
     setIsTyping(true);
 
     try {
-      const response: ChatMessageResponse = await chatService.sendMessage(textToSend);
+      const response: ChatMessageResponse = await chatService.sendMessage(textToSend, undefined, topicRef.current);
+      topicRef.current = response.intentCategory;
 
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
@@ -99,6 +101,7 @@ export const ChatbotPage: React.FC = () => {
   };
 
   const handleClearChat = () => {
+    topicRef.current = undefined;
     setMessages([
       {
         id: 'welcome-reset',
@@ -117,7 +120,7 @@ export const ChatbotPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-8rem)]">
+    <div className="space-y-6 max-w-4xl mx-auto flex flex-col min-h-[36rem] h-[calc(100dvh-5rem)]">
       <div className="flex items-center justify-between">
         <PageHeader
           title="Nutrition questions"
@@ -137,8 +140,8 @@ export const ChatbotPage: React.FC = () => {
       <MedicalDisclaimer variant="compact" />
 
       {/* Chat Messages Panel */}
-      <Card variant="default" className="flex-1 p-4 flex flex-col justify-between overflow-hidden shadow-sm">
-        <div className="flex-1 overflow-y-auto space-y-4 p-2">
+      <Card variant="default" className="flex-1 min-h-0 p-4 flex flex-col justify-between overflow-hidden shadow-sm">
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-4 p-2">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -232,14 +235,17 @@ export const ChatbotPage: React.FC = () => {
           className="pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2"
         >
           <input
+            aria-label="Your nutrition question"
+            maxLength={2000}
             type="text"
-            placeholder="Ask about Vitamin B12, iron foods, tongue soreness, doctor referrals..."
+            placeholder="Ask about water, protein, vitamins or finding care..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             disabled={isTyping}
             className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-health-500 text-slate-900 dark:text-slate-100"
           />
           <Button
+            aria-label="Send message"
             type="submit"
             variant="primary"
             size="md"
