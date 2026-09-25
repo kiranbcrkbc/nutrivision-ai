@@ -405,7 +405,7 @@ export const NewAssessmentPage: React.FC = () => {
                     )}
                   </div>
                   <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                    {isUploading ? 'Uploading & evaluating image...' : 'Choose a photo or drag it here'}
+                    {isUploading ? 'Checking your photo. The service may take up to 2 minutes to wake up.' : 'Choose a photo or drag it here'}
                   </span>
                   <span className="text-xs text-slate-400">
                     JPG, PNG or WebP · Up to 10 MB
@@ -497,7 +497,7 @@ export const NewAssessmentPage: React.FC = () => {
                     <span>Photo check unavailable</span>
                   </div>
                   <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-                    Image uploaded successfully. Quality analysis is temporarily unavailable.
+                    Your photo is saved. The photo-check service has not responded yet. Retry the check without uploading again; it may take up to 2 minutes.
                   </p>
                   <Button
                     variant="outline"
@@ -506,7 +506,7 @@ export const NewAssessmentPage: React.FC = () => {
                     isLoading={isLoading}
                     leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
                   >
-                    Try again
+                    Retry saved photo
                   </Button>
                 </div>
               )}

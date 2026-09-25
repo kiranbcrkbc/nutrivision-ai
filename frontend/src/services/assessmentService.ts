@@ -52,6 +52,7 @@ export const assessmentService = {
     formData.append('file', file);
 
     const res = await api.post(`/assessments/${assessmentId}/images`, formData, {
+      timeout: 120000,
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -63,7 +64,7 @@ export const assessmentService = {
     assessmentId: number | string,
     imageId: number | string
   ): Promise<AssessmentImage> => {
-    const res = await api.post(`/assessments/${assessmentId}/images/${imageId}/analyze-quality`);
+    const res = await api.post(`/assessments/${assessmentId}/images/${imageId}/analyze-quality`, undefined, { timeout: 120000 });
     return res.data?.data;
   },
 
@@ -100,7 +101,7 @@ export const assessmentService = {
     const url = imageId
       ? `/assessments/${assessmentId}/images/${imageId}/screen`
       : `/assessments/${assessmentId}/screen`;
-    const res = await api.post(url, symptoms ? { symptoms } : undefined);
+    const res = await api.post(url, symptoms ? { symptoms } : undefined, { timeout: 120000 });
     return res.data?.data;
   },
 };

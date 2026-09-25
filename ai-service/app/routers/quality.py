@@ -7,8 +7,19 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException, status
 from app.schemas.quality import ImageQualityResponse
 from app.services.quality_service import evaluate_image_quality
 from app.services.content_service import content_service
+from app.services.photo_processing import process_photo
 
 router = APIRouter(tags=["Image Quality Engine"])
+
+
+def evaluate_photo(image_bytes, target_body_part):
+    result = evaluate_image_quality(image_bytes)
+    if result.qualityStatus != "REJECTED":
+        content = content_service.check(image_bytes, target_body_part)
+        if content["status"] != "ACCEPTED":
+            result.qualityStatus = "REJECTED" if content["status"] in {"REJECTED", "INVALID_BODY_PART"} else "PENDING"
+            result.rejectionReason = content["message"]
+    return result
 
 
 @router.post("/analyze-image", response_model=ImageQualityResponse)
@@ -32,13 +43,7 @@ async def check_image_quality(file: UploadFile = File(...), target_body_part: st
         if not image_bytes or len(image_bytes) == 0:
             return evaluate_image_quality(b"")
 
-        result = evaluate_image_quality(image_bytes)
-        if result.qualityStatus != "REJECTED":
-            content = content_service.check(image_bytes, target_body_part)
-            if content["status"] != "ACCEPTED":
-                result.qualityStatus = "REJECTED" if content["status"] in {"REJECTED", "INVALID_BODY_PART"} else "PENDING"
-                result.rejectionReason = content["message"]
-        return result
+        return await process_photo(evaluate_photo, image_bytes, target_body_part)
 
     except HTTPException:
         raise

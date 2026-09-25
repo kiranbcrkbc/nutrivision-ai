@@ -45,7 +45,9 @@ class ModelService:
         self.model_framework: Optional[str] = None
         self.class_labels: List[str] = []
         self.model_metadata: Dict[str, Any] = {}
-        self._initialize_model_registry()
+        # Do not allocate the synthetic model's weights/threads on the small
+        # production instance when it is forbidden from serving predictions.
+        self.model_status = "MODEL_NOT_VALIDATED"
 
     def _resolve_models_dir(self) -> str:
         candidates = [

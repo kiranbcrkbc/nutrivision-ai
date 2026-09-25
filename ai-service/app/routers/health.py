@@ -2,7 +2,7 @@
 Vitamin Deficiency - Health & System Status Router
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 from app.services.model_service import model_service
@@ -39,18 +39,21 @@ def get_simple_health() -> Dict[str, Any]:
 
 
 @router.get("/api/ai/health", response_model=HealthResponse)
-def get_detailed_health() -> HealthResponse:
+def get_detailed_health(response: Response) -> HealthResponse:
     """Detailed health check endpoint reporting quality engine and model status."""
     meta = model_service.get_metadata()
+    ready = content_service.ready()
+    if not ready:
+        response.status_code = 503
     return HealthResponse(
-        status="UP",
+        status="UP" if ready else "UNAVAILABLE",
         service="Vitamin Deficiency Inference Engine",
         version="1.0.0",
         imageQualityEngine="READY",
         inferenceModel=model_service.get_model_status(),
         modelAvailable=model_service.is_model_ready(),
         activeModel=meta.get("model_name"),
-        photoContentCheck="READY" if content_service.ready() else "UNAVAILABLE",
+        photoContentCheck="READY" if ready else "UNAVAILABLE",
         disclaimer=(
             "Results provided by Vitamin Deficiency are AI-based preliminary assessments or possible indicators only. "
             "They are not medically certified diagnoses."
