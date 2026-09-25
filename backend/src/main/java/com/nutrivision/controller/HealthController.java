@@ -3,6 +3,8 @@ package com.nutrivision.controller;
 import com.nutrivision.dto.response.ApiResponse;
 import com.nutrivision.service.AiInferenceClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.availability.ApplicationAvailability;
+import org.springframework.boot.availability.ReadinessState;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,13 @@ public class HealthController {
 
     private final DataSource dataSource;
     private final AiInferenceClient aiInferenceClient;
+    private final ApplicationAvailability availability;
 
     public HealthController(@Autowired(required = false) DataSource dataSource,
-                            AiInferenceClient aiInferenceClient) {
+                            AiInferenceClient aiInferenceClient, ApplicationAvailability availability) {
         this.dataSource = dataSource;
         this.aiInferenceClient = aiInferenceClient;
+        this.availability = availability;
     }
 
 
@@ -32,11 +36,13 @@ public class HealthController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> getServiceHealth() {
         Map<String, Object> status = new HashMap<>();
         status.put("service", "Vitamin Deficiency Backend API Gateway");
-        status.put("status", "UP");
+        boolean ready = availability.getReadinessState() == ReadinessState.ACCEPTING_TRAFFIC;
+        status.put("status", ready ? "UP" : "STARTING");
         status.put("version", "1.0.0");
         status.put("timestamp", Instant.now().toString());
 
-        return ResponseEntity.ok(ApiResponse.success(status, "Vitamin Deficiency API Service is healthy and operational"));
+        return ResponseEntity.status(ready ? 200 : 503).body(ApiResponse.success(status,
+                ready ? "Service ready" : "Service is starting; please retry shortly"));
     }
 
     @GetMapping("/database")
@@ -68,4 +74,3 @@ public class HealthController {
         return ResponseEntity.ok(ApiResponse.success(aiStatus, "AI microservice status retrieved successfully"));
     }
 }
-
