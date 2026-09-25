@@ -1,3 +1,29 @@
+# Deployment verification — 25 September 2026
+
+The repaired educational photo-checking and nutrition workflow is deployed at https://kiranbcrkbc-nutrivision-ai.onrender.com. **This is not a clinically validated vitamin-deficiency detector.** The synthetic medical classifier remains disabled; a real labelled clinical dataset/model and independent evaluation are still required.
+
+## Current release evidence
+
+- Frontend and AI: merge `107ede3` (PR #1). Backend: merge `65b8ee7` (PR #3, including PR #2's TiDB enum migration). Render reports the final backend live at 07:36 IST on 25 September.
+- 38 AI tests and 34 backend tests passed; frontend lint and production build passed.
+- Production API: 20 checks passed across registration, login, burger rejection, direct-inference rejection, real-eye acceptance, symptom/result persistence, history, chart counts, authenticated images, nutrition/diet filtering, assistant, profile, and cross-account access denial.
+- Deployed AI rejected the burger fixture for all six body areas. The browser also rejected it for Eyes and disabled continuation; replacing it with the eye fixture allowed symptoms, review, and a saved record.
+- Four post-deployment checks passed: login, saved symptoms, saved content outcome, and byte-identical image retrieval. New image uploads have a database copy and survive an ephemeral-disk replacement.
+- Render JWT secret was provisioned privately; the published legacy administrator credential is disabled. No paid hosting purchase was made.
+- Startup health now returns 503 until Spring application initialization is complete. TiDB category migration preserves existing enum order and appends vitamin D before seed inserts.
+
+## Delivery limits
+
+- Photo suitability is a provisional CLIP filter, not a diagnosis or a 100% anatomy-accuracy guarantee. The small regression set does not establish performance across people, lighting, cameras, or all unrelated objects. Lips/nails content controls were recognized but failed existing blur thresholds; only eye/tongue controls passed the full quality pipeline in these checks.
+- No medical confidence scores, deficiency ranking, risk grading, or heatmaps are invented. Symptoms are self-reported; charts show activity, not vitamin levels.
+- Free Render instances sleep and can cause slow initial requests or timeouts. An always-on hosting choice is still needed for dependable immediate response.
+- Earlier photos already lost from the old ephemeral filesystem cannot be recovered by this repair. Password-reset email delivery is not configured; the UI states this honestly. A private administrator account still needs owner provisioning.
+- Full multilingual/voice coverage, native apps, lab integration, clinical validation, and a broad device/security audit are not completed.
+
+---
+
+Everything below is historical checkpoint material, retained for audit only. It does not describe the current deployment status.
+
 # Repair checkpoint — 24 September 2026
 
 ## 25 September follow-up (supersedes implementation gaps below)
